@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_package = "com.puj.stubs";
+
+service facultyService {
+    rpc solicitarSalon(DatosPeticion) returns (RespuestaPeticion);
+}
+
+message DatosPeticion{
+    string semestre = 1;
+    string facultad = 2;
+    string programa = 3;
+    int64 salones = 4;
+    int64 laboratorios = 5;
+}
+
+message RespuestaPeticion{
+    int64 salon = 1;
+    int64 lab = 2;
+    string error = 3;
+}
