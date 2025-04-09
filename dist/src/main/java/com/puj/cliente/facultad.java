@@ -2,7 +2,7 @@ package com.puj.cliente;
 
 import java.util.Scanner;
 
-public class clientePeticiones {
+public class facultad {
     public static void main(String[] args) {
         String server = "192.168.10.6"; //Cambiar segun la IP del servidor
         int port = 1080;
@@ -13,6 +13,7 @@ public class clientePeticiones {
 
         System.out.println("\t||Peticion de salones y laboratorios||\n");
 
+        /*
         //Ingresar datos de peticion
         System.out.println("Semestre: ");
         int semestre = input.nextInt();
@@ -30,5 +31,6 @@ public class clientePeticiones {
         int laboratorios = input.nextInt();
 
         System.out.println("Enviando peticion al servidor y esperado respuesta... ");
+         */
     }
 }
