@@ -1,6 +1,13 @@
 package com.puj.cliente;
 
-import java.util.Scanner;
+import com.puj.stubs.Facultad.DatosPeticion;
+import com.puj.stubs.Facultad.Empty;
+import com.puj.stubs.Facultad.RespuestaPeticion;
+import com.puj.stubs.facultyServiceGrpc;
+import com.puj.stubs.facultyServiceGrpc.facultyServiceBlockingStub;
+
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 public class facultad {
     public static void main(String[] args) {
@@ -10,22 +17,53 @@ public class facultad {
         }
         final String nombre = args[0];
         final String semestre = args[1];
-        final String numeroSalones = args[2];
-        final String numeroLaboratorios = args[3];
+        final int numeroSalones = Integer.parseInt(args[2]);
+        final int numeroLaboratorios = Integer.parseInt(args[3]);
 
-        //enviar datos de peticion
+        String server = "192.168.10.8"; //Cambiar segun la IP del servidor
+        int port = 1080;
+    
+        System.out.println("Conectando con el servidor " + server + " en el puerto " + port + "...");
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(server, port)
+                .usePlaintext()
+                .build();
+
+        //Stubs
+        facultyServiceBlockingStub facultyStub = facultyServiceGrpc.newBlockingStub(channel);
+
+        //Inicializar los datos
+        facultyStub.populateLists(Empty.newBuilder().build());
+
+        //Enviar peticion de salones
         System.out.println("\nNueva peticion para el programa de " + nombre +" (semestre " + semestre + ")");
         System.out.println("Salones requeridos: " + numeroSalones);
         System.out.println("Laboratorios requeridos: " + numeroLaboratorios);
         System.out.println("\n");
 
-        String server = "192.168.10.6"; //Cambiar segun la IP del servidor
-        int port = 1080;
-        @SuppressWarnings("resource")
-        Scanner input = new Scanner(System.in);
-    
-        System.out.println("Conectando con el servidor");
+        DatosPeticion request = DatosPeticion.newBuilder()
+                .setSemestre(semestre)
+                .setFacultad(nombre)
+                .setPrograma("Programacion")
+                .setSalones(numeroSalones)
+                .setLaboratorios(numeroLaboratorios)
+                .build();
 
-        System.out.println("Enviando peticion al servidor y esperado respuesta... ");
+        System.out.println("Peticion de salones enviada al servidor.\n");
+        RespuestaPeticion respuestaPeticion = facultyStub.solicitarSalon(request);
+
+        System.out.println("Salones asignados:");
+        for (int i = 0; i < respuestaPeticion.getSalonCount(); i++) {
+            System.out.println(respuestaPeticion.getSalon(i));
+        }
+        System.out.println("\n");
+
+        System.out.println("Laboratorios asignados:");
+        for (int i = 0; i < respuestaPeticion.getLabCount(); i++) {
+            System.out.println( respuestaPeticion.getLab(i));
+        }
+        System.out.println("\n");
+        
+        // Cerrar el canal
+        channel.shutdown();
     }
 }
