@@ -16,9 +16,11 @@ message DatosPeticion{
 }
 
 message RespuestaPeticion{
-    repeated int32 salon = 1;
-    repeated int32 lab = 2;
-    string error = 3;
+    repeated string salon = 1;
+    repeated string lab = 2;
+    repeated string hybrid = 3;
+    int32 status = 4;
+    string mensaje = 5;
 }
 
 message Empty {}

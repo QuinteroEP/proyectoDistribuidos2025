@@ -1012,50 +1012,97 @@ public final class Facultad {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated int32 salon = 1;</code>
+     * <code>repeated string salon = 1;</code>
      * @return A list containing the salon.
      */
-    java.util.List<java.lang.Integer> getSalonList();
+    java.util.List<java.lang.String>
+        getSalonList();
     /**
-     * <code>repeated int32 salon = 1;</code>
+     * <code>repeated string salon = 1;</code>
      * @return The count of salon.
      */
     int getSalonCount();
     /**
-     * <code>repeated int32 salon = 1;</code>
+     * <code>repeated string salon = 1;</code>
      * @param index The index of the element to return.
      * @return The salon at the given index.
      */
-    int getSalon(int index);
+    java.lang.String getSalon(int index);
+    /**
+     * <code>repeated string salon = 1;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the salon at the given index.
+     */
+    com.google.protobuf.ByteString
+        getSalonBytes(int index);
 
     /**
-     * <code>repeated int32 lab = 2;</code>
+     * <code>repeated string lab = 2;</code>
      * @return A list containing the lab.
      */
-    java.util.List<java.lang.Integer> getLabList();
+    java.util.List<java.lang.String>
+        getLabList();
     /**
-     * <code>repeated int32 lab = 2;</code>
+     * <code>repeated string lab = 2;</code>
      * @return The count of lab.
      */
     int getLabCount();
     /**
-     * <code>repeated int32 lab = 2;</code>
+     * <code>repeated string lab = 2;</code>
      * @param index The index of the element to return.
      * @return The lab at the given index.
      */
-    int getLab(int index);
-
+    java.lang.String getLab(int index);
     /**
-     * <code>string error = 3;</code>
-     * @return The error.
-     */
-    java.lang.String getError();
-    /**
-     * <code>string error = 3;</code>
-     * @return The bytes for error.
+     * <code>repeated string lab = 2;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the lab at the given index.
      */
     com.google.protobuf.ByteString
-        getErrorBytes();
+        getLabBytes(int index);
+
+    /**
+     * <code>repeated string hybrid = 3;</code>
+     * @return A list containing the hybrid.
+     */
+    java.util.List<java.lang.String>
+        getHybridList();
+    /**
+     * <code>repeated string hybrid = 3;</code>
+     * @return The count of hybrid.
+     */
+    int getHybridCount();
+    /**
+     * <code>repeated string hybrid = 3;</code>
+     * @param index The index of the element to return.
+     * @return The hybrid at the given index.
+     */
+    java.lang.String getHybrid(int index);
+    /**
+     * <code>repeated string hybrid = 3;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the hybrid at the given index.
+     */
+    com.google.protobuf.ByteString
+        getHybridBytes(int index);
+
+    /**
+     * <code>int32 status = 4;</code>
+     * @return The status.
+     */
+    int getStatus();
+
+    /**
+     * <code>string mensaje = 5;</code>
+     * @return The mensaje.
+     */
+    java.lang.String getMensaje();
+    /**
+     * <code>string mensaje = 5;</code>
+     * @return The bytes for mensaje.
+     */
+    com.google.protobuf.ByteString
+        getMensajeBytes();
   }
   /**
    * Protobuf type {@code RespuestaPeticion}
@@ -1070,9 +1117,13 @@ public final class Facultad {
       super(builder);
     }
     private RespuestaPeticion() {
-      salon_ = emptyIntList();
-      lab_ = emptyIntList();
-      error_ = "";
+      salon_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+      lab_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+      hybrid_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+      mensaje_ = "";
     }
 
     @java.lang.Override
@@ -1097,97 +1148,159 @@ public final class Facultad {
 
     public static final int SALON_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private com.google.protobuf.Internal.IntList salon_ =
-        emptyIntList();
+    private com.google.protobuf.LazyStringArrayList salon_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
     /**
-     * <code>repeated int32 salon = 1;</code>
+     * <code>repeated string salon = 1;</code>
      * @return A list containing the salon.
      */
-    @java.lang.Override
-    public java.util.List<java.lang.Integer>
+    public com.google.protobuf.ProtocolStringList
         getSalonList() {
       return salon_;
     }
     /**
-     * <code>repeated int32 salon = 1;</code>
+     * <code>repeated string salon = 1;</code>
      * @return The count of salon.
      */
     public int getSalonCount() {
       return salon_.size();
     }
     /**
-     * <code>repeated int32 salon = 1;</code>
+     * <code>repeated string salon = 1;</code>
      * @param index The index of the element to return.
      * @return The salon at the given index.
      */
-    public int getSalon(int index) {
-      return salon_.getInt(index);
+    public java.lang.String getSalon(int index) {
+      return salon_.get(index);
     }
-    private int salonMemoizedSerializedSize = -1;
+    /**
+     * <code>repeated string salon = 1;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the salon at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getSalonBytes(int index) {
+      return salon_.getByteString(index);
+    }
 
     public static final int LAB_FIELD_NUMBER = 2;
     @SuppressWarnings("serial")
-    private com.google.protobuf.Internal.IntList lab_ =
-        emptyIntList();
+    private com.google.protobuf.LazyStringArrayList lab_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
     /**
-     * <code>repeated int32 lab = 2;</code>
+     * <code>repeated string lab = 2;</code>
      * @return A list containing the lab.
      */
-    @java.lang.Override
-    public java.util.List<java.lang.Integer>
+    public com.google.protobuf.ProtocolStringList
         getLabList() {
       return lab_;
     }
     /**
-     * <code>repeated int32 lab = 2;</code>
+     * <code>repeated string lab = 2;</code>
      * @return The count of lab.
      */
     public int getLabCount() {
       return lab_.size();
     }
     /**
-     * <code>repeated int32 lab = 2;</code>
+     * <code>repeated string lab = 2;</code>
      * @param index The index of the element to return.
      * @return The lab at the given index.
      */
-    public int getLab(int index) {
-      return lab_.getInt(index);
+    public java.lang.String getLab(int index) {
+      return lab_.get(index);
     }
-    private int labMemoizedSerializedSize = -1;
-
-    public static final int ERROR_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object error_ = "";
     /**
-     * <code>string error = 3;</code>
-     * @return The error.
+     * <code>repeated string lab = 2;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the lab at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getLabBytes(int index) {
+      return lab_.getByteString(index);
+    }
+
+    public static final int HYBRID_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private com.google.protobuf.LazyStringArrayList hybrid_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
+    /**
+     * <code>repeated string hybrid = 3;</code>
+     * @return A list containing the hybrid.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getHybridList() {
+      return hybrid_;
+    }
+    /**
+     * <code>repeated string hybrid = 3;</code>
+     * @return The count of hybrid.
+     */
+    public int getHybridCount() {
+      return hybrid_.size();
+    }
+    /**
+     * <code>repeated string hybrid = 3;</code>
+     * @param index The index of the element to return.
+     * @return The hybrid at the given index.
+     */
+    public java.lang.String getHybrid(int index) {
+      return hybrid_.get(index);
+    }
+    /**
+     * <code>repeated string hybrid = 3;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the hybrid at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getHybridBytes(int index) {
+      return hybrid_.getByteString(index);
+    }
+
+    public static final int STATUS_FIELD_NUMBER = 4;
+    private int status_ = 0;
+    /**
+     * <code>int32 status = 4;</code>
+     * @return The status.
      */
     @java.lang.Override
-    public java.lang.String getError() {
-      java.lang.Object ref = error_;
+    public int getStatus() {
+      return status_;
+    }
+
+    public static final int MENSAJE_FIELD_NUMBER = 5;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object mensaje_ = "";
+    /**
+     * <code>string mensaje = 5;</code>
+     * @return The mensaje.
+     */
+    @java.lang.Override
+    public java.lang.String getMensaje() {
+      java.lang.Object ref = mensaje_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        error_ = s;
+        mensaje_ = s;
         return s;
       }
     }
     /**
-     * <code>string error = 3;</code>
-     * @return The bytes for error.
+     * <code>string mensaje = 5;</code>
+     * @return The bytes for mensaje.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString
-        getErrorBytes() {
-      java.lang.Object ref = error_;
+        getMensajeBytes() {
+      java.lang.Object ref = mensaje_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        error_ = b;
+        mensaje_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -1208,23 +1321,20 @@ public final class Facultad {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
-      if (getSalonList().size() > 0) {
-        output.writeUInt32NoTag(10);
-        output.writeUInt32NoTag(salonMemoizedSerializedSize);
-      }
       for (int i = 0; i < salon_.size(); i++) {
-        output.writeInt32NoTag(salon_.getInt(i));
-      }
-      if (getLabList().size() > 0) {
-        output.writeUInt32NoTag(18);
-        output.writeUInt32NoTag(labMemoizedSerializedSize);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, salon_.getRaw(i));
       }
       for (int i = 0; i < lab_.size(); i++) {
-        output.writeInt32NoTag(lab_.getInt(i));
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, lab_.getRaw(i));
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(error_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, error_);
+      for (int i = 0; i < hybrid_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, hybrid_.getRaw(i));
+      }
+      if (status_ != 0) {
+        output.writeInt32(4, status_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mensaje_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, mensaje_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -1238,33 +1348,33 @@ public final class Facultad {
       {
         int dataSize = 0;
         for (int i = 0; i < salon_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(salon_.getInt(i));
+          dataSize += computeStringSizeNoTag(salon_.getRaw(i));
         }
         size += dataSize;
-        if (!getSalonList().isEmpty()) {
-          size += 1;
-          size += com.google.protobuf.CodedOutputStream
-              .computeInt32SizeNoTag(dataSize);
-        }
-        salonMemoizedSerializedSize = dataSize;
+        size += 1 * getSalonList().size();
       }
       {
         int dataSize = 0;
         for (int i = 0; i < lab_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(lab_.getInt(i));
+          dataSize += computeStringSizeNoTag(lab_.getRaw(i));
         }
         size += dataSize;
-        if (!getLabList().isEmpty()) {
-          size += 1;
-          size += com.google.protobuf.CodedOutputStream
-              .computeInt32SizeNoTag(dataSize);
-        }
-        labMemoizedSerializedSize = dataSize;
+        size += 1 * getLabList().size();
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(error_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, error_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < hybrid_.size(); i++) {
+          dataSize += computeStringSizeNoTag(hybrid_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getHybridList().size();
+      }
+      if (status_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, status_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mensaje_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, mensaje_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -1285,8 +1395,12 @@ public final class Facultad {
           .equals(other.getSalonList())) return false;
       if (!getLabList()
           .equals(other.getLabList())) return false;
-      if (!getError()
-          .equals(other.getError())) return false;
+      if (!getHybridList()
+          .equals(other.getHybridList())) return false;
+      if (getStatus()
+          != other.getStatus()) return false;
+      if (!getMensaje()
+          .equals(other.getMensaje())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -1306,8 +1420,14 @@ public final class Facultad {
         hash = (37 * hash) + LAB_FIELD_NUMBER;
         hash = (53 * hash) + getLabList().hashCode();
       }
-      hash = (37 * hash) + ERROR_FIELD_NUMBER;
-      hash = (53 * hash) + getError().hashCode();
+      if (getHybridCount() > 0) {
+        hash = (37 * hash) + HYBRID_FIELD_NUMBER;
+        hash = (53 * hash) + getHybridList().hashCode();
+      }
+      hash = (37 * hash) + STATUS_FIELD_NUMBER;
+      hash = (53 * hash) + getStatus();
+      hash = (37 * hash) + MENSAJE_FIELD_NUMBER;
+      hash = (53 * hash) + getMensaje().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1439,9 +1559,14 @@ public final class Facultad {
       public Builder clear() {
         super.clear();
         bitField0_ = 0;
-        salon_ = emptyIntList();
-        lab_ = emptyIntList();
-        error_ = "";
+        salon_ =
+            com.google.protobuf.LazyStringArrayList.emptyList();
+        lab_ =
+            com.google.protobuf.LazyStringArrayList.emptyList();
+        hybrid_ =
+            com.google.protobuf.LazyStringArrayList.emptyList();
+        status_ = 0;
+        mensaje_ = "";
         return this;
       }
 
@@ -1484,7 +1609,14 @@ public final class Facultad {
           result.lab_ = lab_;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.error_ = error_;
+          hybrid_.makeImmutable();
+          result.hybrid_ = hybrid_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.status_ = status_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.mensaje_ = mensaje_;
         }
       }
 
@@ -1535,7 +1667,6 @@ public final class Facultad {
         if (!other.salon_.isEmpty()) {
           if (salon_.isEmpty()) {
             salon_ = other.salon_;
-            salon_.makeImmutable();
             bitField0_ |= 0x00000001;
           } else {
             ensureSalonIsMutable();
@@ -1546,7 +1677,6 @@ public final class Facultad {
         if (!other.lab_.isEmpty()) {
           if (lab_.isEmpty()) {
             lab_ = other.lab_;
-            lab_.makeImmutable();
             bitField0_ |= 0x00000002;
           } else {
             ensureLabIsMutable();
@@ -1554,9 +1684,22 @@ public final class Facultad {
           }
           onChanged();
         }
-        if (!other.getError().isEmpty()) {
-          error_ = other.error_;
-          bitField0_ |= 0x00000004;
+        if (!other.hybrid_.isEmpty()) {
+          if (hybrid_.isEmpty()) {
+            hybrid_ = other.hybrid_;
+            bitField0_ |= 0x00000004;
+          } else {
+            ensureHybridIsMutable();
+            hybrid_.addAll(other.hybrid_);
+          }
+          onChanged();
+        }
+        if (other.getStatus() != 0) {
+          setStatus(other.getStatus());
+        }
+        if (!other.getMensaje().isEmpty()) {
+          mensaje_ = other.mensaje_;
+          bitField0_ |= 0x00000010;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -1585,43 +1728,34 @@ public final class Facultad {
               case 0:
                 done = true;
                 break;
-              case 8: {
-                int v = input.readInt32();
-                ensureSalonIsMutable();
-                salon_.addInt(v);
-                break;
-              } // case 8
               case 10: {
-                int length = input.readRawVarint32();
-                int limit = input.pushLimit(length);
+                java.lang.String s = input.readStringRequireUtf8();
                 ensureSalonIsMutable();
-                while (input.getBytesUntilLimit() > 0) {
-                  salon_.addInt(input.readInt32());
-                }
-                input.popLimit(limit);
+                salon_.add(s);
                 break;
               } // case 10
-              case 16: {
-                int v = input.readInt32();
-                ensureLabIsMutable();
-                lab_.addInt(v);
-                break;
-              } // case 16
               case 18: {
-                int length = input.readRawVarint32();
-                int limit = input.pushLimit(length);
+                java.lang.String s = input.readStringRequireUtf8();
                 ensureLabIsMutable();
-                while (input.getBytesUntilLimit() > 0) {
-                  lab_.addInt(input.readInt32());
-                }
-                input.popLimit(limit);
+                lab_.add(s);
                 break;
               } // case 18
               case 26: {
-                error_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
+                java.lang.String s = input.readStringRequireUtf8();
+                ensureHybridIsMutable();
+                hybrid_.add(s);
                 break;
               } // case 26
+              case 32: {
+                status_ = input.readInt32();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 32
+              case 42: {
+                mensaje_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 42
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -1639,72 +1773,83 @@ public final class Facultad {
       }
       private int bitField0_;
 
-      private com.google.protobuf.Internal.IntList salon_ = emptyIntList();
+      private com.google.protobuf.LazyStringArrayList salon_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
       private void ensureSalonIsMutable() {
         if (!salon_.isModifiable()) {
-          salon_ = makeMutableCopy(salon_);
+          salon_ = new com.google.protobuf.LazyStringArrayList(salon_);
         }
         bitField0_ |= 0x00000001;
       }
       /**
-       * <code>repeated int32 salon = 1;</code>
+       * <code>repeated string salon = 1;</code>
        * @return A list containing the salon.
        */
-      public java.util.List<java.lang.Integer>
+      public com.google.protobuf.ProtocolStringList
           getSalonList() {
         salon_.makeImmutable();
         return salon_;
       }
       /**
-       * <code>repeated int32 salon = 1;</code>
+       * <code>repeated string salon = 1;</code>
        * @return The count of salon.
        */
       public int getSalonCount() {
         return salon_.size();
       }
       /**
-       * <code>repeated int32 salon = 1;</code>
+       * <code>repeated string salon = 1;</code>
        * @param index The index of the element to return.
        * @return The salon at the given index.
        */
-      public int getSalon(int index) {
-        return salon_.getInt(index);
+      public java.lang.String getSalon(int index) {
+        return salon_.get(index);
       }
       /**
-       * <code>repeated int32 salon = 1;</code>
+       * <code>repeated string salon = 1;</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the salon at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getSalonBytes(int index) {
+        return salon_.getByteString(index);
+      }
+      /**
+       * <code>repeated string salon = 1;</code>
        * @param index The index to set the value at.
        * @param value The salon to set.
        * @return This builder for chaining.
        */
       public Builder setSalon(
-          int index, int value) {
-
+          int index, java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
         ensureSalonIsMutable();
-        salon_.setInt(index, value);
+        salon_.set(index, value);
         bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 salon = 1;</code>
+       * <code>repeated string salon = 1;</code>
        * @param value The salon to add.
        * @return This builder for chaining.
        */
-      public Builder addSalon(int value) {
-
+      public Builder addSalon(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
         ensureSalonIsMutable();
-        salon_.addInt(value);
+        salon_.add(value);
         bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 salon = 1;</code>
+       * <code>repeated string salon = 1;</code>
        * @param values The salon to add.
        * @return This builder for chaining.
        */
       public Builder addAllSalon(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
+          java.lang.Iterable<java.lang.String> values) {
         ensureSalonIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
             values, salon_);
@@ -1713,82 +1858,109 @@ public final class Facultad {
         return this;
       }
       /**
-       * <code>repeated int32 salon = 1;</code>
+       * <code>repeated string salon = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearSalon() {
-        salon_ = emptyIntList();
-        bitField0_ = (bitField0_ & ~0x00000001);
+        salon_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string salon = 1;</code>
+       * @param value The bytes of the salon to add.
+       * @return This builder for chaining.
+       */
+      public Builder addSalonBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        ensureSalonIsMutable();
+        salon_.add(value);
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
 
-      private com.google.protobuf.Internal.IntList lab_ = emptyIntList();
+      private com.google.protobuf.LazyStringArrayList lab_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
       private void ensureLabIsMutable() {
         if (!lab_.isModifiable()) {
-          lab_ = makeMutableCopy(lab_);
+          lab_ = new com.google.protobuf.LazyStringArrayList(lab_);
         }
         bitField0_ |= 0x00000002;
       }
       /**
-       * <code>repeated int32 lab = 2;</code>
+       * <code>repeated string lab = 2;</code>
        * @return A list containing the lab.
        */
-      public java.util.List<java.lang.Integer>
+      public com.google.protobuf.ProtocolStringList
           getLabList() {
         lab_.makeImmutable();
         return lab_;
       }
       /**
-       * <code>repeated int32 lab = 2;</code>
+       * <code>repeated string lab = 2;</code>
        * @return The count of lab.
        */
       public int getLabCount() {
         return lab_.size();
       }
       /**
-       * <code>repeated int32 lab = 2;</code>
+       * <code>repeated string lab = 2;</code>
        * @param index The index of the element to return.
        * @return The lab at the given index.
        */
-      public int getLab(int index) {
-        return lab_.getInt(index);
+      public java.lang.String getLab(int index) {
+        return lab_.get(index);
       }
       /**
-       * <code>repeated int32 lab = 2;</code>
+       * <code>repeated string lab = 2;</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the lab at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getLabBytes(int index) {
+        return lab_.getByteString(index);
+      }
+      /**
+       * <code>repeated string lab = 2;</code>
        * @param index The index to set the value at.
        * @param value The lab to set.
        * @return This builder for chaining.
        */
       public Builder setLab(
-          int index, int value) {
-
+          int index, java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
         ensureLabIsMutable();
-        lab_.setInt(index, value);
+        lab_.set(index, value);
         bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 lab = 2;</code>
+       * <code>repeated string lab = 2;</code>
        * @param value The lab to add.
        * @return This builder for chaining.
        */
-      public Builder addLab(int value) {
-
+      public Builder addLab(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
         ensureLabIsMutable();
-        lab_.addInt(value);
+        lab_.add(value);
         bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 lab = 2;</code>
+       * <code>repeated string lab = 2;</code>
        * @param values The lab to add.
        * @return This builder for chaining.
        */
       public Builder addAllLab(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
+          java.lang.Iterable<java.lang.String> values) {
         ensureLabIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
             values, lab_);
@@ -1797,84 +1969,243 @@ public final class Facultad {
         return this;
       }
       /**
-       * <code>repeated int32 lab = 2;</code>
+       * <code>repeated string lab = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearLab() {
-        lab_ = emptyIntList();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        lab_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string lab = 2;</code>
+       * @param value The bytes of the lab to add.
+       * @return This builder for chaining.
+       */
+      public Builder addLabBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        ensureLabIsMutable();
+        lab_.add(value);
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
 
-      private java.lang.Object error_ = "";
+      private com.google.protobuf.LazyStringArrayList hybrid_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+      private void ensureHybridIsMutable() {
+        if (!hybrid_.isModifiable()) {
+          hybrid_ = new com.google.protobuf.LazyStringArrayList(hybrid_);
+        }
+        bitField0_ |= 0x00000004;
+      }
       /**
-       * <code>string error = 3;</code>
-       * @return The error.
+       * <code>repeated string hybrid = 3;</code>
+       * @return A list containing the hybrid.
        */
-      public java.lang.String getError() {
-        java.lang.Object ref = error_;
+      public com.google.protobuf.ProtocolStringList
+          getHybridList() {
+        hybrid_.makeImmutable();
+        return hybrid_;
+      }
+      /**
+       * <code>repeated string hybrid = 3;</code>
+       * @return The count of hybrid.
+       */
+      public int getHybridCount() {
+        return hybrid_.size();
+      }
+      /**
+       * <code>repeated string hybrid = 3;</code>
+       * @param index The index of the element to return.
+       * @return The hybrid at the given index.
+       */
+      public java.lang.String getHybrid(int index) {
+        return hybrid_.get(index);
+      }
+      /**
+       * <code>repeated string hybrid = 3;</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the hybrid at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getHybridBytes(int index) {
+        return hybrid_.getByteString(index);
+      }
+      /**
+       * <code>repeated string hybrid = 3;</code>
+       * @param index The index to set the value at.
+       * @param value The hybrid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHybrid(
+          int index, java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        ensureHybridIsMutable();
+        hybrid_.set(index, value);
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string hybrid = 3;</code>
+       * @param value The hybrid to add.
+       * @return This builder for chaining.
+       */
+      public Builder addHybrid(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        ensureHybridIsMutable();
+        hybrid_.add(value);
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string hybrid = 3;</code>
+       * @param values The hybrid to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllHybrid(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureHybridIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, hybrid_);
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string hybrid = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearHybrid() {
+        hybrid_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string hybrid = 3;</code>
+       * @param value The bytes of the hybrid to add.
+       * @return This builder for chaining.
+       */
+      public Builder addHybridBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        ensureHybridIsMutable();
+        hybrid_.add(value);
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+
+      private int status_ ;
+      /**
+       * <code>int32 status = 4;</code>
+       * @return The status.
+       */
+      @java.lang.Override
+      public int getStatus() {
+        return status_;
+      }
+      /**
+       * <code>int32 status = 4;</code>
+       * @param value The status to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatus(int value) {
+
+        status_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 status = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStatus() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        status_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object mensaje_ = "";
+      /**
+       * <code>string mensaje = 5;</code>
+       * @return The mensaje.
+       */
+      public java.lang.String getMensaje() {
+        java.lang.Object ref = mensaje_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          error_ = s;
+          mensaje_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string error = 3;</code>
-       * @return The bytes for error.
+       * <code>string mensaje = 5;</code>
+       * @return The bytes for mensaje.
        */
       public com.google.protobuf.ByteString
-          getErrorBytes() {
-        java.lang.Object ref = error_;
+          getMensajeBytes() {
+        java.lang.Object ref = mensaje_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          error_ = b;
+          mensaje_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string error = 3;</code>
-       * @param value The error to set.
+       * <code>string mensaje = 5;</code>
+       * @param value The mensaje to set.
        * @return This builder for chaining.
        */
-      public Builder setError(
+      public Builder setMensaje(
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
-        error_ = value;
-        bitField0_ |= 0x00000004;
+        mensaje_ = value;
+        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
       /**
-       * <code>string error = 3;</code>
+       * <code>string mensaje = 5;</code>
        * @return This builder for chaining.
        */
-      public Builder clearError() {
-        error_ = getDefaultInstance().getError();
-        bitField0_ = (bitField0_ & ~0x00000004);
+      public Builder clearMensaje() {
+        mensaje_ = getDefaultInstance().getMensaje();
+        bitField0_ = (bitField0_ & ~0x00000010);
         onChanged();
         return this;
       }
       /**
-       * <code>string error = 3;</code>
-       * @param value The bytes for error to set.
+       * <code>string mensaje = 5;</code>
+       * @param value The bytes for mensaje to set.
        * @return This builder for chaining.
        */
-      public Builder setErrorBytes(
+      public Builder setMensajeBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
-        error_ = value;
-        bitField0_ |= 0x00000004;
+        mensaje_ = value;
+        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -2366,12 +2697,13 @@ public final class Facultad {
       "\n\016facultad.proto\"l\n\rDatosPeticion\022\020\n\010sem" +
       "estre\030\001 \001(\t\022\020\n\010facultad\030\002 \001(\t\022\020\n\010program" +
       "a\030\003 \001(\t\022\017\n\007salones\030\004 \001(\005\022\024\n\014laboratorios" +
-      "\030\005 \001(\005\">\n\021RespuestaPeticion\022\r\n\005salon\030\001 \003" +
-      "(\005\022\013\n\003lab\030\002 \003(\005\022\r\n\005error\030\003 \001(\t\"\007\n\005Empty2" +
-      "g\n\016facultyService\0224\n\016solicitarSalon\022\016.Da" +
-      "tosPeticion\032\022.RespuestaPeticion\022\037\n\rpopul" +
-      "ateLists\022\006.Empty\032\006.EmptyB\017\n\rcom.puj.stub" +
-      "sb\006proto3"
+      "\030\005 \001(\005\"`\n\021RespuestaPeticion\022\r\n\005salon\030\001 \003" +
+      "(\t\022\013\n\003lab\030\002 \003(\t\022\016\n\006hybrid\030\003 \003(\t\022\016\n\006statu" +
+      "s\030\004 \001(\005\022\017\n\007mensaje\030\005 \001(\t\"\007\n\005Empty2g\n\016fac" +
+      "ultyService\0224\n\016solicitarSalon\022\016.DatosPet" +
+      "icion\032\022.RespuestaPeticion\022\037\n\rpopulateLis" +
+      "ts\022\006.Empty\032\006.EmptyB\017\n\rcom.puj.stubsb\006pro" +
+      "to3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -2388,7 +2720,7 @@ public final class Facultad {
     internal_static_RespuestaPeticion_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_RespuestaPeticion_descriptor,
-        new java.lang.String[] { "Salon", "Lab", "Error", });
+        new java.lang.String[] { "Salon", "Lab", "Hybrid", "Status", "Mensaje", });
     internal_static_Empty_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_Empty_fieldAccessorTable = new
