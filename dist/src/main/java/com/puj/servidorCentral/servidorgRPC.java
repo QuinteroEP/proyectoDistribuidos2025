@@ -20,9 +20,8 @@ public class servidorgRPC extends facultyServiceGrpc.facultyServiceImplBase {
     String mensaje = null;
     Integer status = null;
 
-    boolean classSuccess = false;
-    boolean labSuccess = false;
-    boolean mobiles = false; 
+    boolean success = false;
+    boolean mobiles = false;
 
     boolean initiated = false;
 
@@ -30,6 +29,9 @@ public class servidorgRPC extends facultyServiceGrpc.facultyServiceImplBase {
     long startTime;
     long endTime;
     long responseTime;
+
+    List<Long> tiempos = new ArrayList<>();
+    long runningTimeTotal = 0;
 
     @Override
     public void populateLists(Empty request, StreamObserver<Empty> responseObserver){
@@ -74,11 +76,10 @@ public class servidorgRPC extends facultyServiceGrpc.facultyServiceImplBase {
                 salones.remove(0);
             }
             System.out.println("Salones asignados: " + salonesAsignados);
-            classSuccess = true;
+            success = true;
         
         }else{
             System.out.println("Error: Salones insuficientes.\n");
-            classSuccess = false;
         }
 
         //Asignar laboratorios
@@ -90,61 +91,49 @@ public class servidorgRPC extends facultyServiceGrpc.facultyServiceImplBase {
                 laboratorios.remove(0);
             }
             System.out.println("Laboratorios asignados: " + laboratiosAsignados);
-            labSuccess = true;
-        
+            success = true;
         }
 
         //Hibridos
         else if (laboratorios.size() <= request.getLaboratorios() && salones.size() >= request.getLaboratorios()){
             int r = 0;
-            System.out.println("Error: Laboratorios insuficientes, asignando laboratorios mobiles.\n");
-            for(int i = 0; i <= laboratorios.size(); i++){
+            int remaining = laboratorios.size();
+
+            System.out.println("Alerta: Laboratorios insuficientes, asignando laboratorios normales y mobiles.\n");
+            for(int i = 0; i < remaining; i++){
                 laboratiosAsignados.add(laboratorios.get(0));
                 laboratorios.remove(0);
                 r++;
             }
-            
+            if(laboratiosAsignados.size() > 0){
+                System.out.println("Laboratorios asignados: " + laboratiosAsignados);
+            }
+
             for(int i = 0; i < request.getLaboratorios() - r; i++){
                 laboratoriosMobiles.add(salones.get(0));
                 salones.remove(0);
             }
             System.out.println("Laboratorios moviles asignados: " + laboratoriosMobiles + "\n");
             mobiles = true;
-            labSuccess = true;
+            success = true;
         }
-        
         else{
             System.out.println("Error: Laboratorios insuficientes.\n");
-            labSuccess = false;
+            success = false;
         }
 
         //Codigos de estado
-        if(classSuccess == false && labSuccess == false){
+        if(success == false){
             mensaje = "La peticion no pude ser completada.";
-            status = 300;
+            status = 200;
         }
 
-        else if(classSuccess && labSuccess == false){
-            mensaje = "La peticion no pude ser completada en su totalidad. Laboratorios insuficientes";
-            status = 201;
-        }
-
-        else if(classSuccess == false && labSuccess){
-            mensaje = "La peticion no pude ser completada en su totalidad. Salones insuficientes";
-            status = 202;
-        }
-
-        else if (classSuccess && labSuccess && mobiles == false){
-            mensaje = "La peticion fue completada. Laboratorios asignados";
+        else if (success && mobiles){
+            mensaje = "La peticion fue completada. Laboratorios mobiles asignados";
             status = 101;
         }
 
-        else if (classSuccess && mobiles){
-            mensaje = "La peticion fue completada. Laboratorios mobiles asignados";
-            status = 102;
-        }
-
-        else if (classSuccess && labSuccess){
+        else if (success){
             mensaje = "La peticion fue completada sin problemas";
             status = 100;
         }
@@ -164,7 +153,44 @@ public class servidorgRPC extends facultyServiceGrpc.facultyServiceImplBase {
         System.out.println("Tiempo de respuesta: " + responseTime + " ms\n");
         System.out.println("Estado de la peticion: " + status + " (" + mensaje + ")\n");
 
+        //Metricas de tiempo
+        runningTimeTotal += responseTime;
+        tiempos.add(responseTime);
+
+        if(tiempos.size() == 5){
+            System.out.println("Tiempo de respuesta promedio: " + (runningTimeTotal / tiempos.size()) + " ms\n");
+            getMaxTime(tiempos);
+            getMinTime(tiempos);
+
+            tiempos.clear();
+            runningTimeTotal = 0;
+        }
+
         responseObserver.onNext(response);
         responseObserver.onCompleted();
+    }
+
+    public void getMaxTime(List<Long> tiempos){
+        long maxTime = 0;
+
+        for(int i = 0; i < tiempos.size(); i++){
+            if(tiempos.get(i) > maxTime){
+                maxTime = tiempos.get(i);
+            }
+        }
+
+        System.out.println("Tiempo de respuesta maximo: " + maxTime + " ms\n");
+    }
+
+    public void getMinTime(List<Long> tiempos){
+        long minTime = 1000;
+
+        for(int i = 0; i < tiempos.size(); i++){
+            if(tiempos.get(i) < minTime){
+                minTime = tiempos.get(i);
+            }
+        }
+
+        System.out.println("Tiempo de respuesta minimo: " + minTime + " ms\n");
     }
 }

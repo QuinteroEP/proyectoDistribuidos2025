@@ -61,9 +61,9 @@
                 <version>0.6.1</version>
                 <configuration>
                     <deleteOutputDirectory>true</deleteOutputDirectory>
-                    <protocArtifact>com.google.protobuf:protoc:3.25.1:exe:windows-x86_64</protocArtifact>
+                    <protocArtifact>com.google.protobuf:protoc:3.25.1:exe:${os.detected.classifier}</protocArtifact>
                     <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.57.2:exe:windows-x86_64</pluginArtifact>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.57.2:exe:${os.detected.classifier}</pluginArtifact>
                     <protoSourceRoot>${project.basedir}/src/proto</protoSourceRoot>
                 </configuration>
                 <executions>

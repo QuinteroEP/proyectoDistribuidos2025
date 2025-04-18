@@ -1,11 +1,14 @@
 com\puj\stubs\Facultad$DatosPeticion$1.class
 com\puj\stubs\facultyServiceGrpc$1.class
+com\puj\cliente\facultad.class
 com\puj\stubs\facultyServiceGrpc$facultyServiceImplBase.class
+facultad.proto
 com\puj\stubs\facultyServiceGrpc$3.class
 com\puj\stubs\Facultad$EmptyOrBuilder.class
 com\puj\stubs\facultyServiceGrpc$facultyServiceFutureStub.class
 com\puj\stubs\facultyServiceGrpc$MethodHandlers.class
 com\puj\servidorCentral\servidor.class
+com\puj\servidorCentral\servidorgRPC.class
 com\puj\stubs\Facultad$Empty$1.class
 com\puj\stubs\facultyServiceGrpc$AsyncService.class
 com\puj\stubs\Facultad$RespuestaPeticion$1.class

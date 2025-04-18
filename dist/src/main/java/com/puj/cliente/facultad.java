@@ -20,7 +20,7 @@ public class facultad {
         final int numeroSalones = Integer.parseInt(args[2]);
         final int numeroLaboratorios = Integer.parseInt(args[3]);
 
-        String server = "192.168.6.77"; //Cambiar segun la IP del servidor
+        String server = "192.168.0.25"; //Cambiar segun la IP del servidor
         int port = 1080;
     
         System.out.println("Conectando con el servidor " + server + " en el puerto " + port + "...");
@@ -50,38 +50,33 @@ public class facultad {
 
         System.out.println("Peticion de salones enviada al servidor. Esperando respuesta...\n");
         RespuestaPeticion respuestaPeticion = facultyStub.solicitarSalon(request);
-
-        if(respuestaPeticion.getSalonCount() > 0){
-            System.out.println("Salones asignados:");
-            for (int i = 0; i < respuestaPeticion.getSalonCount(); i++) {
-                System.out.println(respuestaPeticion.getSalon(i));
+        if(respuestaPeticion.getStatus() == 200){
+            System.out.println("Lo sentimos, no hay suficientes salones y laboratorios disponibles para el programa de " + nombre + "\n");
+        }
+        else{
+            if(respuestaPeticion.getSalonCount() > 0){
+                System.out.println("Salones asignados:");
+                for (int i = 0; i < respuestaPeticion.getSalonCount(); i++) {
+                    System.out.println(respuestaPeticion.getSalon(i));
+                }
+                System.out.println("\n");
             }
-        }
-        if(respuestaPeticion.getStatus() == 202){
-            System.out.println("Lo sentimos, no hay suficientes salones disponibles para el programa de " + nombre + "\n");
-        }
-        System.out.println("\n");
-
-        if(respuestaPeticion.getLabCount() > 0){
-            System.out.println("Laboratorios asignados:");
-            for (int i = 0; i < respuestaPeticion.getLabCount(); i++) {
-                System.out.println( respuestaPeticion.getLab(i));
+    
+            if(respuestaPeticion.getLabCount() > 0){
+                System.out.println("Laboratorios asignados:");
+                for (int i = 0; i < respuestaPeticion.getLabCount(); i++) {
+                    System.out.println( respuestaPeticion.getLab(i));
+                }
+                System.out.println("\n");
             }
-        }
-        if(respuestaPeticion.getStatus() == 201){
-            System.out.println("Lo sentimos, no hay suficientes laboratorios disponibles para el programa de " + nombre + "\n");
-        }
-        System.out.println("\n");
-
-        if(respuestaPeticion.getHybridCount() > 0){
-            System.out.println("Laboratorios moviles asignados:");
-            for (int i = 0; i < respuestaPeticion.getHybridCount(); i++) {
-                System.out.println( respuestaPeticion.getHybrid(i));
+    
+            if(respuestaPeticion.getHybridCount() > 0){
+                System.out.println("No hay suficientes laboratorios disponibles. Se han asignado los siguientes salones como laboratorios moviles:");
+                for (int i = 0; i < respuestaPeticion.getHybridCount(); i++) {
+                    System.out.println( respuestaPeticion.getHybrid(i));
+                }
+                System.out.println("\n");
             }
-        }
-
-        if(respuestaPeticion.getStatus() == 300){
-    System.out.println("Lo sentimos, no hay suficientes salones y laboratorios disponibles para el programa de " + nombre + "\n");
         }
         
         // Cerrar el canal
