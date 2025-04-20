@@ -20,7 +20,7 @@ public class facultad {
         final int numeroSalones = Integer.parseInt(args[2]);
         final int numeroLaboratorios = Integer.parseInt(args[3]);
 
-        String server = "192.168.0.25"; //Cambiar segun la IP del servidor
+        String server = "192.168.10.8"; //Cambiar segun la IP del servidor
         int port = 1080;
     
         System.out.println("Conectando con el servidor " + server + " en el puerto " + port + "...");
