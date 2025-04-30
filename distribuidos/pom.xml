@@ -13,4 +13,19 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+    <dependencies>
+            <dependency>
+                <groupId>org.zeromq</groupId>
+                <artifactId>jeromq</artifactId>
+                <version>0.6.0</version>
+            </dependency>
+
+            <!-- for the latest SNAPSHOT -->
+            <dependency>
+                <groupId>org.zeromq</groupId>
+                <artifactId>jeromq</artifactId>
+                <version>0.6.0</version>
+            </dependency>
+    </dependencies>
+
 </project>
