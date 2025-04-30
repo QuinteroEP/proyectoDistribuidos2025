@@ -17,9 +17,6 @@ public class central {
         List<String> laboratoriosMobiles = new ArrayList<>();
 
         //Tiempos de respuets
-        long startTime;
-        long endTime;
-        long responseTime;
         List<Long> tiempos = new ArrayList<>();
         long runningTimeTotal = 0;
 
@@ -30,14 +27,14 @@ public class central {
             System.out.println("\nServidor central abierto en el puerto 1080...");
 
             //Generar listas de salones
-            for(int i = 1; i <= 10; i++){
+            for(int i = 1; i <= 20; i++){
                 String n = String.valueOf(i);
                 String s = n + "S";
 
                 salones.add(s);
             }
 
-            for(int i = 1; i <= 5; i++){
+            for(int i = 1; i <= 20; i++){
                 String n = String.valueOf(i);
                 String l = n + "L";
 
@@ -68,19 +65,54 @@ public class central {
     }
 
     private static void handleRequest(String message, List<String> salonesDisponibles, List<String> laboratoriosDisponibles, ZMQ.Socket socket){
+        List<String> salonesAsignados = new ArrayList<>();
+        List<String> laboratoriosAsignados = new ArrayList<>();
+        
+        long startTime;
+        long endTime;
+        long responseTime;
+
+        startTime = System.currentTimeMillis();
+       
         //Procesar el mensaje
         String[] parts = message.split("\\|");
         String nombre = parts[0];
         int numeroSalones = Integer.parseInt(parts[1]);
         int numeroLaboratorios = Integer.parseInt(parts[2]);
 
-        System.out.println("Nueva solicitud del programa " + nombre + ":");
-        System.out.println("\nSalones: " + numeroSalones);
-        System.out.println("Laboratorios: " + numeroLaboratorios);
+        System.out.println("Nueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; " + numeroLaboratorios + " Laboratorios.\n");
 
         //Realizar asignacion de salones
 
+        //Salones
+        if(salonesDisponibles.size() >= numeroSalones){
+            for(int i = 0; i < numeroSalones; i++){
+                salonesAsignados.add(salonesDisponibles.get(0));
+                salonesDisponibles.remove(0);
+            }
+            System.out.println("\nSalones asignados a " + nombre +  ": " + salonesAsignados);
+        
+        }else{
+            System.out.println("Error: Salones insuficientes.\n");
+        }
+
+        //Laboratorios
+        if(laboratoriosDisponibles.size() >= numeroLaboratorios){
+            for(int i = 0; i < numeroLaboratorios; i++){
+                laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
+                laboratoriosDisponibles.remove(0);
+            }
+            System.out.println("\nLaboratorios asignados a " + nombre +  ": " + laboratoriosAsignados);
+        
+        }else{
+            System.out.println("Error: Salones insuficientes.\n");
+        }
+        
         //Enviar respuesta
+        endTime = System.currentTimeMillis();
+        responseTime = endTime - startTime;
+
+        System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
         String response = "ack";
         socket.send(response.getBytes(ZMQ.CHARSET), 0);
     }

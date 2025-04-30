@@ -47,9 +47,8 @@
     ],
     "compounds": [
     {
-        "name": "Ejecutar en Paralelo",
+        "name": "Ejecutar Facultades en Paralelo",
         "configurations": [
-            "central",
             "Facultad 1",
             "Facultad 2",
             "Facultad 3"
