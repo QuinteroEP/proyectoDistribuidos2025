@@ -17,10 +17,9 @@ public class Facultad {
         final int numeroLaboratorios = Integer.parseInt(args[3]);
 
         try (ZContext context = new ZContext()) {
-            System.out.println("\nConectando al servidor de peticiones...");
 
             ZMQ.Socket socket = context.createSocket(SocketType.REQ);
-            socket.connect("tcp://localhost:1080");
+            socket.connect("tcp://192.168.10.4:1080"); //Cambiar por la IP de la maquina con el servidor central
             System.out.println("Conectado al servidor de peticiones.\n");
 
             System.out.println("Peticion recibida para el programa " + nombre + " (" + semestre + "):\nSalones: " + numeroSalones + "\nLaboratorios: " + numeroLaboratorios + "\n");
