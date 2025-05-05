@@ -14,7 +14,6 @@ public class central {
         //Laboratorios y salones
         List<String> salones = new ArrayList<>();
         List<String> laboratorios = new ArrayList<>();
-        List<String> laboratoriosMobiles = new ArrayList<>();
 
         //Tiempos de respuets
         List<Long> tiempos = new ArrayList<>();
@@ -26,7 +25,7 @@ public class central {
             socket.bind("tcp://*:1080");
             System.out.println("\nServidor central abierto en el puerto 1080...");
 
-            //Generar listas de salones
+            //Popular listas de salones
             for(int i = 1; i <= 20; i++){
                 String n = String.valueOf(i);
                 String s = n + "S";
@@ -40,8 +39,6 @@ public class central {
 
                 laboratorios.add(l);
             }
-
-            System.out.println("Listas de salones generadas.\n");
 
             System.out.println("Salones disponibles: " + salones);
             System.out.println("Laboratorios disponibles: " + laboratorios);
@@ -67,6 +64,9 @@ public class central {
     private static void handleRequest(String message, List<String> salonesDisponibles, List<String> laboratoriosDisponibles, ZMQ.Socket socket){
         List<String> salonesAsignados = new ArrayList<>();
         List<String> laboratoriosAsignados = new ArrayList<>();
+
+        Boolean ClassSuccess = false;
+        Boolean LabSuccess = false;
         
         long startTime;
         long endTime;
@@ -90,11 +90,18 @@ public class central {
                 salonesAsignados.add(salonesDisponibles.get(0));
                 salonesDisponibles.remove(0);
             }
-            System.out.println("\nSalones asignados a " + nombre +  ": " + salonesAsignados);
+            ClassSuccess = true;
         
         }else{
-            System.out.println("Error: Salones insuficientes.\n");
+            System.out.println("Atencion: Salones insuficientes.\n");
+
+            for(int i = 0; i <= salonesDisponibles.size(); i++){
+                salonesAsignados.add(salonesDisponibles.get(0));
+                salonesDisponibles.remove(0);
+            }
+            ClassSuccess = false;
         }
+        System.out.println("Salones asignados a " + nombre +  ": " + salonesAsignados);
 
         //Laboratorios
         if(laboratoriosDisponibles.size() >= numeroLaboratorios){
@@ -102,10 +109,41 @@ public class central {
                 laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
                 laboratoriosDisponibles.remove(0);
             }
-            System.out.println("\nLaboratorios asignados a " + nombre +  ": " + laboratoriosAsignados);
+            LabSuccess = true;
         
+        }else if(salonesDisponibles.size() >= numeroLaboratorios){
+            System.out.println("\nAtencion: Laboratorios insuficientes, asignado laboratorios hibridos.\n");
+
+            for(int i = 0; i < laboratoriosDisponibles.size(); i++){
+                laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
+                laboratoriosDisponibles.remove(0);
+            }
+
+            for(int i = 0; i < numeroLaboratorios - laboratoriosAsignados.size(); i++){
+                laboratoriosAsignados.add(salonesDisponibles.get(0));
+                salonesDisponibles.remove(0);
+            }
+            LabSuccess = true;
         }else{
-            System.out.println("Error: Salones insuficientes.\n");
+            System.out.println("\nAtencion: Laboratorios insuficientes.\n");
+
+            for(int i = 0; i <= laboratoriosDisponibles.size(); i++){
+                laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
+                laboratoriosDisponibles.remove(0);
+            }
+            ClassSuccess = false;
+        }
+        System.out.println("\nLaboratorios asignados a " + nombre +  ": " + laboratoriosAsignados);
+
+        //Estado de la peticion
+        if(LabSuccess && ClassSuccess){
+            System.out.println("\nPeticion completada sin problemas\n");
+        }
+        else if(!LabSuccess || !ClassSuccess){
+            System.out.println("\nLa peticion no pudo ser completada en su totalidad\n");
+        }
+        else{
+            System.out.println("\nLa peticion no pudo ser completada.\n");
         }
         
         //Enviar respuesta
@@ -113,7 +151,8 @@ public class central {
         responseTime = endTime - startTime;
 
         System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
-        String response = "ack";
+        
+        String response = salonesAsignados + " | " + laboratoriosAsignados;
         socket.send(response.getBytes(ZMQ.CHARSET), 0);
     }
 

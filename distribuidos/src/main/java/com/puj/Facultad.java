@@ -7,19 +7,20 @@ import org.zeromq.ZMQ;
 public class Facultad {
     public static void main(String[] args) {
         if(args.length != 4) {
-            System.out.println("\nError: uso incorrecto. Se requieren los parametros <nombre del programa> <semestre> <numero de salones requeridos> <numero de laboratorios requeridos>\n");
+            System.out.println("\nError: uso incorrecto. Se requieren los parametros <nombre de la facultad> <semestre> <direccion IP del servidor Central>\n");
             System.exit(1);
         }
 
         final String nombre = args[0];
         final String semestre = args[1];
+        //final String serverIP = Integer.parseInt(args[2]);
         final int numeroSalones = Integer.parseInt(args[2]);
         final int numeroLaboratorios = Integer.parseInt(args[3]);
 
         try (ZContext context = new ZContext()) {
 
             ZMQ.Socket socket = context.createSocket(SocketType.REQ);
-            socket.connect("tcp://192.168.10.4:1080"); //Cambiar por la IP de la maquina con el servidor central
+            socket.connect("tcp://192.168.10.8:1080"); //Cambiar por la IP de la maquina con el servidor central
             System.out.println("Conectado al servidor de peticiones.\n");
 
             System.out.println("Peticion recibida para el programa " + nombre + " (" + semestre + "):\nSalones: " + numeroSalones + "\nLaboratorios: " + numeroLaboratorios + "\n");
@@ -30,9 +31,12 @@ public class Facultad {
 
             System.out.println("Peticion enviada, esperando respuesta...\n");
 
-            //Recibir respuesta
+            //Recibir y procesar respuesta
             byte[] reply = socket.recv(0);
-            System.out.println("Peticion completada: " + new String(reply, ZMQ.CHARSET));
+            String replyString = new String(reply, ZMQ.CHARSET);
+            String[] parts = replyString.split("\\|");
+
+            System.out.println("Peticion completada. \nSalones: " + parts[0] + "\nLaboratorios: " + parts[1]);
         }
     }
 }
