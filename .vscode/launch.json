@@ -3,10 +3,29 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Programa",
+            "name": "Facultad 1",
             "request": "launch",
-            "mainClass": "com.puj.Programa",
-            "projectName": "distribuidos"
+            "mainClass": "com.puj.Facultad",
+            "projectName": "distribuidos",
+            "args": [
+                "Ingeniería",
+                "2025-1",
+                "192.168.10.8",
+                "1081"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Facultad 2",
+            "request": "launch",
+            "mainClass": "com.puj.Facultad",
+            "projectName": "distribuidos",
+            "args": [
+                "Tecnología",
+                "2025-1",
+                "192.168.10.8",
+                "1082"
+            ]
         },
         {
             "type": "java",
@@ -17,48 +36,86 @@
         },
         {
             "type": "java",
-            "name": "Facultad 1",
+            "name": "Programa 1",
             "request": "launch",
-            "mainClass": "com.puj.Facultad",
+            "mainClass": "com.puj.Programa",
             "args": [
-                "Introduccion a la Programacion",
+                "Ingeniería de Sistemas",
                 "2025-1",
+                "Ingeniería",
                 "3",
-                "2"
+                "2",
+                "1081"
             ]
         },
         {
             "type": "java",
-            "name": "Facultad 2",
+            "name": "Programa 2",
             "request": "launch",
-            "mainClass": "com.puj.Facultad",
+            "mainClass": "com.puj.Programa",
             "args": [
-                "Bases de Datos",
+                "Ingeniería Electrónica",
                 "2025-1",
+                "Ingeniería",
                 "4",
-                "5"
+                "5",
+                "1081"
             ]
         },
         {
             "type": "java",
-            "name": "Facultad 3",
+            "name": "Programa 3",
             "request": "launch",
-            "mainClass": "com.puj.Facultad",
+            "mainClass": "com.puj.Programa",
             "args": [
-                "Introduccion a Sistemas Distribuidos",
+                "Ciberseguridad",
                 "2025-1",
+                "Tecnología",
                 "1",
-                "1"
+                "2",
+                "1082"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Programa 4",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Big Data",
+                "2025-1",
+                "Tecnología",
+                "4",
+                "1",
+                "1082"
             ]
         }
     ],
     "compounds": [
     {
+        "name": "Ejecutar Programas Academicos en Paralelo",
+        "configurations": [
+            "Programa 1",
+            "Programa 2",
+            "Programa 3"
+        ]
+    },
+    {
         "name": "Ejecutar Facultades en Paralelo",
         "configurations": [
             "Facultad 1",
+            "Facultad 2"
+        ]
+    },
+    {
+        "name": "Caso: 2 facultades, 2 programas cada una",
+        "configurations": [
+            "Facultad 1",
             "Facultad 2",
-            "Facultad 3"
+            "Programa 1",
+            "Programa 2",
+            "Programa 3",
+            "Programa 4"
         ]
     }
 ]

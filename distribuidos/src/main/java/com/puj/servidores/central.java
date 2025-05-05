@@ -22,8 +22,8 @@ public class central {
         //Crear Socket
         try (ZContext context = new ZContext()) {
             ZMQ.Socket socket = context.createSocket(SocketType.REP);
-            socket.bind("tcp://*:1080");
-            System.out.println("\nServidor central abierto en el puerto 1080...");
+            socket.bind("tcp://*:1090");
+            System.out.println("\nServidor central abierto en el puerto 1090...");
 
             //Popular listas de salones
             for(int i = 1; i <= 20; i++){
