@@ -10,14 +10,14 @@ import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 public class central {
+    //Tiempos de respuets
+    public static List<Long> tiempos = new ArrayList<>();
+    public static long runningTimeTotal = 0;
+    
     public static void main(String[] args){
         //Laboratorios y salones
         List<String> salones = new ArrayList<>();
         List<String> laboratorios = new ArrayList<>();
-
-        //Tiempos de respuets
-        List<Long> tiempos = new ArrayList<>();
-        long runningTimeTotal = 0;
 
         //Crear Socket
         try (ZContext context = new ZContext()) {
@@ -151,32 +151,41 @@ public class central {
         responseTime = endTime - startTime;
 
         System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
+        getTimes(responseTime);
         
         String response = salonesAsignados + " | " + laboratoriosAsignados;
         socket.send(response.getBytes(ZMQ.CHARSET), 0);
     }
 
-    public void getMaxTime(List<Long> tiempos){
+    public static void getTimes(Long t){
         long maxTime = 0;
-
-        for(int i = 0; i < tiempos.size(); i++){
-            if(tiempos.get(i) > maxTime){
-                maxTime = tiempos.get(i);
-            }
-        }
-
-        System.out.println("Tiempo de respuesta maximo: " + maxTime + " ms\n");
-    }
-
-    public void getMinTime(List<Long> tiempos){
         long minTime = 1000;
+        long promedio = 0;
 
-        for(int i = 0; i < tiempos.size(); i++){
-            if(tiempos.get(i) < minTime){
-                minTime = tiempos.get(i);
+        runningTimeTotal = runningTimeTotal + t;
+        tiempos.add(t);
+
+        if(tiempos.size() == 5){
+            //Tiempo maximo
+            for(int i = 0; i < tiempos.size(); i++){
+                if(tiempos.get(i) > maxTime){
+                    maxTime = tiempos.get(i);
+                }
             }
-        }
 
-        System.out.println("Tiempo de respuesta minimo: " + minTime + " ms\n");
+            //Tiempo minimo
+            for(int i = 0; i < tiempos.size(); i++){
+                if(tiempos.get(i) < minTime){
+                    minTime = tiempos.get(i);
+                }
+            }
+
+            promedio = runningTimeTotal/5;
+
+            System.out.println("\nTiempo minimo de respueta: " + minTime + "ms");
+            System.out.println("Tiempo maximo de respueta: " + maxTime + "ms");
+            System.out.println("Tiempo promedio de respueta: " + promedio + "ms\n");
+        }
+        System.out.println("Tiempos:" + tiempos + "\n");
     }
 }
