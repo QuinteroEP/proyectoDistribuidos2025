@@ -17,3 +17,8 @@ Compilacion:
 Ejecucion:
     1:Navegar a la carpeta Target/classes (ejem: 'cd C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\target\classes\com\puj\')
     2:Ejecutar 'java -cp "target/classes;target/dependency/*" com.puj.<archivo> <parametros>' para cada uno de los componentes
+
+Docker:
+    1:Abrir cmd e ir al directorio raiz del programa usando 'cd' (ejem: 'cd C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\)
+    2: ejecutar el comando 'docker build -f dockerfile-<programa> -t distribuidos/<nombre> .' para constuir las imagenes de cada docker
+    3:Ejecutar cada docker con 'docker run -it distribuidos/<nombre> <parametros>'

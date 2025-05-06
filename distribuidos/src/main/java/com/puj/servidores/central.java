@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
@@ -22,7 +22,7 @@ public class central {
     public static List<Long> tiempos = new ArrayList<>();
     public static long runningTimeTotal = 0;
     
-    public static void main(String[] args){
+    public static void main(String[] args) throws UnknownHostException{
         //Laboratorios y salones
         List<String> salones = new ArrayList<>();
         List<String> laboratorios = new ArrayList<>();
@@ -31,7 +31,7 @@ public class central {
         try (ZContext context = new ZContext()) {
             ZMQ.Socket socket = context.createSocket(SocketType.ROUTER);
             socket.bind("tcp://*:1090");
-            System.out.println("\nServidor central abierto en el puerto 1090...");
+            System.out.println("\nServidor central abierto en el puerto 1090. Servidor " + InetAddress.getLocalHost() + "\n");
 
             //Popular listas de salones
             for(int i = 1; i <= 20; i++){
