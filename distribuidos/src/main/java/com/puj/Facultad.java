@@ -19,13 +19,13 @@ public class Facultad {
         System.out.println("\nFacultad de " + nombre + " para el semestre " + semestre + " creada.\n");
 
         try (ZContext context = new ZContext()) {
-            //Servidor de programas
+            //Servidor de programas - sincrono
             String addressProgram = "tcp://localhost:" + port;
             ZMQ.Socket receiveSocket = context.createSocket(SocketType.REP);
             receiveSocket.bind(addressProgram);
             System.out.println("Conectado al servidor de programas. Direccion: " + addressProgram + "\n");
 
-            //Servidor Central
+            //Servidor Central - asincrono
             String addressCentral = "tcp://" + serverIP + ":1090";
             ZMQ.Socket sendSocket = context.createSocket(SocketType.DEALER);
             sendSocket.connect(addressCentral);
@@ -60,7 +60,10 @@ public class Facultad {
                 String replyString = new String(reply, ZMQ.CHARSET);
                 String[] partsResponse = replyString.split("\\|");
 
-                System.out.println("Peticion completada. \nSalones: " + partsResponse[0] + "\nLaboratorios:" + partsResponse[1]);
+                System.out.println("Peticion completada. \nSalones: " + partsResponse[0] + "\nLaboratorios: " + partsResponse[1]);
+                System.out.println("Status: " + partsResponse[2]);
+
+                receiveSocket.send(replyString);
             }
         }
     }

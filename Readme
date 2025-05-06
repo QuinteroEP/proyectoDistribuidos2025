@@ -10,8 +10,10 @@ Este programa es una aplicacion distribuida para la asignacion de salones y labo
     4: Un servidor replica que maneja la base de datos
 
 Compilacion:
-    1:Abrir cmd e ir al directorio raiz del programa usando 'cd' (ejem: 'cd C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\src\main\java')
-    2:Compilar Facultad, Programa, Central y Replica con 'javac -cp C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\lib\jeromq-0.6.0.jar com\puj\<archivo>.java'
+    1:Abrir cmd e ir al directorio raiz del programa usando 'cd' (ejem: 'cd C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\)
+    2:Ejecutar 'mvn compile' para compilar
+    3:Ejecutar 'mvn dependency:copy-dependencies' para copiar las dependencias a la carpeta
 
 Ejecucion:
-    1:En el directorio raiz, ejecutar con 'java -cp .;C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\lib\jeromq-0.6.0.jar com.puj.<archivo> <parametros>'
+    1:Navegar a la carpeta Target/classes (ejem: 'cd C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\target\classes\com\puj\')
+    2:Ejecutar 'java -cp "target/classes;target/dependency/*" com.puj.<archivo> <parametros>' para cada uno de los componentes

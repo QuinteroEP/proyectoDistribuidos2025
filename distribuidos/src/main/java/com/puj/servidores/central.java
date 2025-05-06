@@ -5,6 +5,14 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.File;
+import java.io.IOException;
+
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
@@ -33,7 +41,7 @@ public class central {
                 salones.add(s);
             }
 
-            for(int i = 1; i <= 20; i++){
+            for(int i = 1; i <= 10; i++){
                 String n = String.valueOf(i);
                 String l = n + "L";
 
@@ -71,9 +79,11 @@ public class central {
     private static String handleRequest(String message, List<String> salonesDisponibles, List<String> laboratoriosDisponibles){
         List<String> salonesAsignados = new ArrayList<>();
         List<String> laboratoriosAsignados = new ArrayList<>();
+        String status = "";
 
-        Boolean ClassSuccess = false;
-        Boolean LabSuccess = false;
+        Boolean ClassSuccess = true;
+        Boolean LabSuccess = true;
+        Boolean incomplete = false;
         
         long startTime;
         long endTime;
@@ -87,7 +97,7 @@ public class central {
         int numeroSalones = Integer.parseInt(parts[1]);
         int numeroLaboratorios = Integer.parseInt(parts[2]);
 
-        System.out.println("Nueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; " + numeroLaboratorios + " Laboratorios.\n");
+        System.out.println("\nNueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; " + numeroLaboratorios + " Laboratorios.\n");
 
         //Realizar asignacion de salones
 
@@ -102,11 +112,17 @@ public class central {
         }else{
             System.out.println("Atencion: Salones insuficientes.\n");
 
-            for(int i = 0; i <= salonesDisponibles.size(); i++){
+            if(salonesDisponibles.size() != 0){
+                for(int i = 0; i <= salonesDisponibles.size(); i++){
                 salonesAsignados.add(salonesDisponibles.get(0));
                 salonesDisponibles.remove(0);
+                }
+                ClassSuccess = false;
             }
-            ClassSuccess = false;
+            else{
+                incomplete = true;
+            }
+            
         }
         System.out.println("Salones asignados a " + nombre +  ": " + salonesAsignados);
 
@@ -116,6 +132,7 @@ public class central {
                 laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
                 laboratoriosDisponibles.remove(0);
             }
+            incomplete = false;
             LabSuccess = true;
         
         }else if(salonesDisponibles.size() >= numeroLaboratorios){
@@ -130,29 +147,42 @@ public class central {
                 laboratoriosAsignados.add(salonesDisponibles.get(0));
                 salonesDisponibles.remove(0);
             }
+            incomplete = false;
             LabSuccess = true;
         }else{
             System.out.println("\nAtencion: Laboratorios insuficientes.\n");
 
-            for(int i = 0; i <= laboratoriosDisponibles.size(); i++){
-                laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
-                laboratoriosDisponibles.remove(0);
+            if(laboratoriosDisponibles.size() != 0){
+                for(int i = 0; i <= laboratoriosDisponibles.size(); i++){
+                    laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
+                    laboratoriosDisponibles.remove(0);
+                }
             }
-            ClassSuccess = false;
+            LabSuccess = false;
         }
         System.out.println("\nLaboratorios asignados a " + nombre +  ": " + laboratoriosAsignados);
 
         //Estado de la peticion
         if(LabSuccess && ClassSuccess){
             System.out.println("\nPeticion completada sin problemas\n");
+            status = "completado";
+        }
+        else if(incomplete){
+            System.out.println("\nLa peticion no pudo ser completada.\n");
+            status = "pendiente";
         }
         else if(!LabSuccess || !ClassSuccess){
             System.out.println("\nLa peticion no pudo ser completada en su totalidad\n");
-        }
-        else{
-            System.out.println("\nLa peticion no pudo ser completada.\n");
+            status = "completado parcialmente";
         }
         
+        System.out.println("\nSalones disponibles: " + salonesDisponibles);
+        System.out.println("Laboratorios disponibles: " + laboratoriosDisponibles);
+        System.out.println("\n");
+        
+        //Escribir al archivo
+        writeToFile(nombre, numeroSalones, numeroLaboratorios, status);
+
         //Enviar respuesta
         endTime = System.currentTimeMillis();
         responseTime = endTime - startTime;
@@ -160,7 +190,7 @@ public class central {
         System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
         getTimes(responseTime);
         
-        String response = salonesAsignados + " | " + laboratoriosAsignados;
+        String response = salonesAsignados + "|" + laboratoriosAsignados + "|" + status;
         return response;
     }
 
@@ -193,6 +223,33 @@ public class central {
             System.out.println("Tiempo maximo de respueta: " + maxTime + "ms");
             System.out.println("Tiempo promedio de respueta: " + promedio + "ms\n");
         }
-        System.out.println("Tiempos: " + tiempos + "\n");
+    }
+
+    private static void writeToFile(String nombre, int Salones, int Laboratorios, String status){
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonNode = objectMapper.createObjectNode();
+        jsonNode.put("Programa academico", nombre);
+        jsonNode.put("Salones pedidos", Salones);
+        jsonNode.put("Laboratorios pedidos", Laboratorios);
+        jsonNode.put("Estado", status);
+
+        File file = new File("asignacionSalones.json");
+        ArrayNode rootArray;
+
+        try {
+            // If file exists, read it as an array
+            if (file.exists() && file.length() > 0) {
+                rootArray = (ArrayNode) objectMapper.readTree(file);
+            } else {
+                // If file doesn't exist or is empty, create a new array
+                rootArray = objectMapper.createArrayNode();
+            }
+    
+            rootArray.add(jsonNode);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, rootArray);
+    
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

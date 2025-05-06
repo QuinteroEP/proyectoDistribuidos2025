@@ -32,7 +32,26 @@ public class Programa {
             socket.send(mensaje);
 
             String reply = socket.recvStr();
-            System.out.println("Respuesta de la facultad: " + reply);
+            String[] partsResponse = reply.split("\\|");
+
+            if(partsResponse[2].equals("completado")){
+                System.out.println("\nPeticion completada\n");
+            }
+            else if(partsResponse[2].equals("completado parcialmente")){
+                System.out.println("\nServidor: Por la demanda actual, su peiticion no pudo ser completada en su totalidad.");
+            }
+            else if(partsResponse[2].equals("pendiente")){
+                System.out.println("\nServidor: Lo sentimos, no hay salones disponibles actualmente.");
+            }
+
+            if(!partsResponse[0].equals("[]"))
+            {
+                System.out.println("Salones asignados: " + partsResponse[0]);
+            }
+            if(!partsResponse[1].equals("[]"))
+            {
+                System.out.println("Laboratorios asignados: " + partsResponse[1]);
+            }
         }
     }
 }

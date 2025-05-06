@@ -10,7 +10,7 @@
             "args": [
                 "Ingeniería",
                 "2025-1",
-                "192.168.10.8",
+                "10.150.102.169",
                 "1081"
             ]
         },
@@ -23,7 +23,7 @@
             "args": [
                 "Tecnología",
                 "2025-1",
-                "192.168.10.8",
+                "10.150.102.169",
                 "1082"
             ]
         },
@@ -169,6 +169,14 @@
             "Programa 5",
             "Programa 6",
             "Programa 7"
+        ]
+    },
+    {
+        "name": "Quickstart",
+        "configurations": [
+            "central",
+            "Facultad 1",
+            "Programa 1",
         ]
     }
 ]
