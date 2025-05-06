@@ -27,7 +27,7 @@ public class Facultad {
 
             //Servidor Central
             String addressCentral = "tcp://" + serverIP + ":1090";
-            ZMQ.Socket sendSocket = context.createSocket(SocketType.REQ);
+            ZMQ.Socket sendSocket = context.createSocket(SocketType.DEALER);
             sendSocket.connect(addressCentral);
             System.out.println("Conectado al servidor central. Direccion: " + addressCentral + "\n");
 
@@ -39,7 +39,7 @@ public class Facultad {
                 String recievedMessage = receiveSocket.recvStr();
                 String[] parts = recievedMessage.split("\\,");
 
-                System.out.println("Petición recibida: " + recievedMessage);
+                System.out.println("\nNueva petición recibida: " + recievedMessage);
 
                 //Costruir mensaje
                 System.out.println("\nSalones: " + parts[2] + "\nLaboratorios: " + parts[3]);
@@ -47,18 +47,20 @@ public class Facultad {
                 String numeroLaboratorios = parts[3];
                 String nombrePrograma = parts[0];
 
-
                 //Enviar mensaje
                 String request = nombrePrograma + "|" + numeroSalones + "|" + numeroLaboratorios;
+                sendSocket.sendMore(""); //Mensaje vacio 
                 sendSocket.send(request.getBytes(ZMQ.CHARSET), 0);
                 System.out.println("\nPeticion enviada, esperando respuesta...\n");
 
                 //Recibir y procesar respuesta
+                byte[] emptyFrame = sendSocket.recv(0); 
                 byte[] reply = sendSocket.recv(0);
+
                 String replyString = new String(reply, ZMQ.CHARSET);
                 String[] partsResponse = replyString.split("\\|");
 
-                System.out.println("Peticion completada. \nSalones: " + partsResponse[0] + "\nLaboratorios: " + partsResponse[1]);
+                System.out.println("Peticion completada. \nSalones: " + partsResponse[0] + "\nLaboratorios:" + partsResponse[1]);
             }
         }
     }

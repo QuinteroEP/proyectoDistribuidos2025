@@ -21,7 +21,7 @@ public class central {
 
         //Crear Socket
         try (ZContext context = new ZContext()) {
-            ZMQ.Socket socket = context.createSocket(SocketType.REP);
+            ZMQ.Socket socket = context.createSocket(SocketType.ROUTER);
             socket.bind("tcp://*:1090");
             System.out.println("\nServidor central abierto en el puerto 1090...");
 
@@ -49,19 +49,26 @@ public class central {
             //Crear trabajadores
             ExecutorService executor = Executors.newCachedThreadPool();
 
+            //Recibir mensajes
             while (!Thread.currentThread().isInterrupted()) {
+                byte[] id = socket.recv(0); 
+                byte[] empty = socket.recv(0);  
                 byte[] request = socket.recv(0);
+
                 String message = new String(request, ZMQ.CHARSET);
 
                 //Enviar peticion a trabajador
                 executor.submit(() -> {
-                    handleRequest(message, salones, laboratorios, socket);
+                    String reply = handleRequest(message, salones, laboratorios);
+                    socket.sendMore(id);
+                    socket.sendMore(""); // empty delimiter
+                    socket.send(reply);
                 });
             }
         }
     }
 
-    private static void handleRequest(String message, List<String> salonesDisponibles, List<String> laboratoriosDisponibles, ZMQ.Socket socket){
+    private static String handleRequest(String message, List<String> salonesDisponibles, List<String> laboratoriosDisponibles){
         List<String> salonesAsignados = new ArrayList<>();
         List<String> laboratoriosAsignados = new ArrayList<>();
 
@@ -154,7 +161,7 @@ public class central {
         getTimes(responseTime);
         
         String response = salonesAsignados + " | " + laboratoriosAsignados;
-        socket.send(response.getBytes(ZMQ.CHARSET), 0);
+        return response;
     }
 
     public static void getTimes(Long t){
@@ -186,6 +193,6 @@ public class central {
             System.out.println("Tiempo maximo de respueta: " + maxTime + "ms");
             System.out.println("Tiempo promedio de respueta: " + promedio + "ms\n");
         }
-        System.out.println("Tiempos:" + tiempos + "\n");
+        System.out.println("Tiempos: " + tiempos + "\n");
     }
 }

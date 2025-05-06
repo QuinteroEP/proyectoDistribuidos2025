@@ -28,7 +28,7 @@ public class Programa {
             ZMQ.Socket socket = context.createSocket(SocketType.REQ);
             socket.connect(address);
 
-            String mensaje = nombre + "," + semestre + "," + numeroSalones + "," + numeroLaboratorios + "," + facultad;
+            String mensaje = nombre + "," + semestre + "," + numeroSalones + "," + numeroLaboratorios;
             socket.send(mensaje);
 
             String reply = socket.recvStr();
