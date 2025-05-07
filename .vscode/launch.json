@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "database",
+            "request": "launch",
+            "mainClass": "com.puj.dbManager",
+            "projectName": "distribuidos"
+        },
+        {
+            "type": "java",
             "name": "Facultad 1",
             "request": "launch",
             "mainClass": "com.puj.Facultad",
@@ -10,7 +17,7 @@
             "args": [
                 "Ingeniería",
                 "2025-1",
-                "10.195.49.33",
+                "10.195.49.225",
                 "1081"
             ]
         },
@@ -23,7 +30,7 @@
             "args": [
                 "Tecnología",
                 "2025-1",
-                "10.195.49.33",
+                "10.195.49.225",
                 "1082"
             ]
         },
@@ -45,7 +52,7 @@
                 "Ingeniería",
                 "3",
                 "2",
-                "1081"
+                "10.195.49.225:1081"
             ]
         },
         {
@@ -59,7 +66,7 @@
                 "Ingeniería",
                 "4",
                 "5",
-                "1081"
+                "10.195.49.225:1081"
             ]
         },
         {
@@ -73,7 +80,7 @@
                 "Tecnología",
                 "1",
                 "2",
-                "1082"
+                "10.195.49.225:1082"
             ]
         },
         {
@@ -87,7 +94,7 @@
                 "Tecnología",
                 "4",
                 "1",
-                "1082"
+                "10.195.49.225:1082"
             ]
         },
         {
@@ -101,7 +108,7 @@
                 "Ingeniería",
                 "4",
                 "3",
-                "1081"
+                "10.195.49.225:1081"
             ]
         },
         {
@@ -115,7 +122,7 @@
                 "Ingeniería",
                 "2",
                 "2",
-                "1081"
+                "10.195.49.225:1081"
             ]
         },
         {
@@ -129,7 +136,7 @@
                 "Ingeniería",
                 "1",
                 "1",
-                "1081"
+                "10.195.49.225:1081"
             ]
         }
     ],
@@ -175,6 +182,7 @@
         "name": "Quickstart",
         "configurations": [
             "central",
+            "database",
             "Facultad 1",
             "Programa 1",
         ]

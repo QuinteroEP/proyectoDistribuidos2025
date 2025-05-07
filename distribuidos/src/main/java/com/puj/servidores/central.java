@@ -5,22 +5,21 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.File;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.LocalDate;
 
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
+import com.puj.dbManager;
+
 public class central {
     //Tiempos de respuets
     public static List<Long> tiempos = new ArrayList<>();
     public static long runningTimeTotal = 0;
+    public static dbManager manager;
     
     public static void main(String[] args) throws UnknownHostException{
         //Laboratorios y salones
@@ -60,7 +59,7 @@ public class central {
             //Recibir mensajes
             while (!Thread.currentThread().isInterrupted()) {
                 byte[] id = socket.recv(0); 
-                byte[] empty = socket.recv(0);  
+                socket.recv(0);  
                 byte[] request = socket.recv(0);
 
                 String message = new String(request, ZMQ.CHARSET);
@@ -96,8 +95,11 @@ public class central {
         String nombre = parts[0];
         int numeroSalones = Integer.parseInt(parts[1]);
         int numeroLaboratorios = Integer.parseInt(parts[2]);
+        String nombreFacultad = parts[3];
+        String semestrePrograma = parts[4];
 
-        System.out.println("\nNueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; " + numeroLaboratorios + " Laboratorios.\n");
+        System.out.println("\nNueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; " + numeroLaboratorios + " Laboratorios.");
+        System.out.println("(Semestre: " + semestrePrograma + ", facultad: " + nombreFacultad + ")\n");
 
         //Realizar asignacion de salones
 
@@ -162,26 +164,27 @@ public class central {
         }
         System.out.println("\nLaboratorios asignados a " + nombre +  ": " + laboratoriosAsignados);
 
-        //Estado de la peticion
+        //Estado de la peticion y registrar peticion
         if(LabSuccess && ClassSuccess){
             System.out.println("\nPeticion completada sin problemas\n");
             status = "completado";
+            dbManager.writeAsign(nombre, salonesAsignados, laboratoriosAsignados, status, semestrePrograma, nombreFacultad);
         }
         else if(incomplete){
             System.out.println("\nLa peticion no pudo ser completada.\n");
             status = "pendiente";
+            dbManager.writePending(nombre, numeroSalones, numeroLaboratorios, nombreFacultad, semestrePrograma, LocalDate.now().toString());
         }
         else if(!LabSuccess || !ClassSuccess){
             System.out.println("\nLa peticion no pudo ser completada en su totalidad\n");
             status = "completado parcialmente";
+            dbManager.writeAsign(nombre, salonesAsignados, laboratoriosAsignados, status, semestrePrograma, nombreFacultad);
         }
         
         System.out.println("\nSalones disponibles: " + salonesDisponibles);
         System.out.println("Laboratorios disponibles: " + laboratoriosDisponibles);
         System.out.println("\n");
         
-        //Escribir al archivo
-        writeToFile(nombre, numeroSalones, numeroLaboratorios, status);
 
         //Enviar respuesta
         endTime = System.currentTimeMillis();
@@ -222,34 +225,6 @@ public class central {
             System.out.println("\nTiempo minimo de respueta: " + minTime + "ms");
             System.out.println("Tiempo maximo de respueta: " + maxTime + "ms");
             System.out.println("Tiempo promedio de respueta: " + promedio + "ms\n");
-        }
-    }
-
-    private static void writeToFile(String nombre, int Salones, int Laboratorios, String status){
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode jsonNode = objectMapper.createObjectNode();
-        jsonNode.put("Programa academico", nombre);
-        jsonNode.put("Salones pedidos", Salones);
-        jsonNode.put("Laboratorios pedidos", Laboratorios);
-        jsonNode.put("Estado", status);
-
-        File file = new File("asignacionSalones.json");
-        ArrayNode rootArray;
-
-        try {
-            // If file exists, read it as an array
-            if (file.exists() && file.length() > 0) {
-                rootArray = (ArrayNode) objectMapper.readTree(file);
-            } else {
-                // If file doesn't exist or is empty, create a new array
-                rootArray = objectMapper.createArrayNode();
-            }
-    
-            rootArray.add(jsonNode);
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, rootArray);
-    
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

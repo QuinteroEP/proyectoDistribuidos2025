@@ -20,10 +20,10 @@ public class Facultad {
 
         try (ZContext context = new ZContext()) {
             //Servidor de programas - sincrono
-            String addressProgram = "tcp://localhost:" + port;
+            String addressProgram = "tcp://*:"+port;
             ZMQ.Socket receiveSocket = context.createSocket(SocketType.REP);
             receiveSocket.bind(addressProgram);
-            System.out.println("Conectado al servidor de programas. Direccion: " + addressProgram + "\n");
+            System.out.println("inicializado el servidor de programas. Direccion: " + addressProgram + "\n");
 
             //Servidor Central - asincrono
             String addressCentral = "tcp://" + serverIP + ":1090";
@@ -46,15 +46,17 @@ public class Facultad {
                 String numeroSalones = parts[2];
                 String numeroLaboratorios = parts[3];
                 String nombrePrograma = parts[0];
+                String nombreFacultad = parts[4];
+                String semestrePrograma = parts[1]; 
 
                 //Enviar mensaje
-                String request = nombrePrograma + "|" + numeroSalones + "|" + numeroLaboratorios;
+                String request = nombrePrograma + "|" + numeroSalones + "|" + numeroLaboratorios + "|" + nombreFacultad + "|" + semestrePrograma;
                 sendSocket.sendMore(""); //Mensaje vacio 
                 sendSocket.send(request.getBytes(ZMQ.CHARSET), 0);
                 System.out.println("\nPeticion enviada, esperando respuesta...\n");
 
                 //Recibir y procesar respuesta
-                byte[] emptyFrame = sendSocket.recv(0); 
+                sendSocket.recv(0); 
                 byte[] reply = sendSocket.recv(0);
 
                 String replyString = new String(reply, ZMQ.CHARSET);
