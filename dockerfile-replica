@@ -1,0 +1,5 @@
+# dockerfile-replica
+FROM openjdk:17
+COPY ./distribuidos/src/main/java/com/puj/ServidorReplica.java /app/
+WORKDIR /app
+CMD ["java", "ServidorReplica.java"]
