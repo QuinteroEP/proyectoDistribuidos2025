@@ -1,4 +1,18 @@
 services:
+  replica:
+    image: distribuidos/replica
+    build:
+      context: ./distribuidos/src/main/java/com/puj/
+      dockerfile: ../../../../dockerfile-replica
+    networks:
+      - mynetwork
+    depends_on:
+      - central
+      - postgres
+    environment:
+      - PRIMARY_IP=central
+      - DB_URL=jdbc:postgresql://postgres:5432/aulas
+      
   facultad:
     image: distribuidos/facultad
     build:
