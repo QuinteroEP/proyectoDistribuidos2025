@@ -22,6 +22,14 @@ public class central {
     public static dbManager manager;
     
     public static void main(String[] args) throws UnknownHostException{
+        if(args.length != 2) {
+            System.out.println("\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles>\n");
+            System.exit(1);
+        }
+
+        final int can_Salones = Integer.parseInt(args[0]);
+        final int can_Labs = Integer.parseInt(args[1]);
+
         //Laboratorios y salones
         List<String> salones = new ArrayList<>();
         List<String> laboratorios = new ArrayList<>();
@@ -33,14 +41,14 @@ public class central {
             System.out.println("\nServidor central abierto en el puerto 1090. Servidor " + InetAddress.getLocalHost() + "\n");
 
             //Popular listas de salones
-            for(int i = 1; i <= 20; i++){
+            for(int i = 1; i <= can_Salones; i++){
                 String n = String.valueOf(i);
                 String s = n + "S";
 
                 salones.add(s);
             }
 
-            for(int i = 1; i <= 10; i++){
+            for(int i = 1; i <= can_Labs; i++){
                 String n = String.valueOf(i);
                 String l = n + "L";
 
