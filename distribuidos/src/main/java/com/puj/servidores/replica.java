@@ -12,17 +12,17 @@ import org.zeromq.ZMQ;
 
 public class replica {
     private static boolean isPrimary = false;
-    private static final long TIMEOUT = 10000;
 
     public static void main(String[] args) {
-        if(args.length != 3) {
-            System.out.println("\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles> <direccion de servidor central>\n");
+        if(args.length != 4) {
+            System.out.println("\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles> <direccion de servidor central> <tiempo maximo de espera en Ms>\n");
             System.exit(1);
         }
 
         final int can_Salones = Integer.parseInt(args[0]);
         final int can_Labs = Integer.parseInt(args[1]);
-        final String centralIP = (args[2]);
+        final String centralIP = args[2];
+        final long TIMEOUT = Long.parseLong(args[3]);
 
         //Laboratorios y salones
         List<String> salones = new ArrayList<>();
@@ -43,7 +43,7 @@ public class replica {
             laboratorios.add(l);
         }
         
-        new Thread(() -> monitorPrimary(centralIP)).start();
+        new Thread(() -> monitorPrimary(centralIP, TIMEOUT)).start();
 
         while (!isPrimary) {
             try {
@@ -56,7 +56,7 @@ public class replica {
         startAsPrimary();
     }
 
-    private static void monitorPrimary(String IP) {
+    private static void monitorPrimary(String IP, Long TIMEOUT) {
         try (ZContext context = new ZContext()){
             ZMQ.Socket centralSocket = context.createSocket(SocketType.SUB);
 
