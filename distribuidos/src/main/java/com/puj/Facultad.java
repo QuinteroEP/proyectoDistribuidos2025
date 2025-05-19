@@ -6,8 +6,8 @@ import org.zeromq.ZMQ;
 
 public class Facultad {
     public static void main(String[] args) {
-        if(args.length != 4) {
-            System.out.println("\nError: uso incorrecto. Se requieren los parametros <nombre de la facultad> <semestre> <direccion IP del servidor Central> <puerto de la facultad>\n");
+        if(args.length != 5) {
+            System.out.println("\nError: uso incorrecto. Se requieren los parametros <nombre de la facultad> <semestre> <direccion IP del servidor Central> <puerto de la facultad> <direccion IP del servidor de respaldo>\n");
             System.exit(1);
         }
 
@@ -15,6 +15,7 @@ public class Facultad {
         final String semestre = args[1];
         final String serverIP = args[2];
         final String port = args[3];
+        final String backupIP = args[4];
 
         System.out.println("\nFacultad de " + nombre + " para el semestre " + semestre + " creada.\n");
 
@@ -30,6 +31,12 @@ public class Facultad {
             ZMQ.Socket sendSocket = context.createSocket(SocketType.DEALER);
             sendSocket.connect(addressCentral);
             System.out.println("Conectado al servidor central. Direccion: " + addressCentral + "\n");
+
+            //Servidor de respaldo
+            String addressBackup = "tcp://" + backupIP + ":1090";
+            ZMQ.Socket backupSocket = context.createSocket(SocketType.DEALER);
+            backupSocket.connect(addressBackup);
+            System.out.println("Conectado al servidor de respaldo. Direccion: " + addressBackup + "\n");
 
             System.out.println("Esperando peticiones de los programas...\n");
 
