@@ -26,7 +26,7 @@ public class dbManager {
         }
     }
 
-    public static void writeAsign(String nombre, List<String> Salones, List<String> Laboratorios, String status, String semestre, String facultad){
+    public static void writeAsign(String nombre, List<String> Salones, List<String> Laboratorios, String status, String semestre, String facultad, String fecha){
         String uri = "mongodb+srv://pabloqc:Moira24@clusterproyecto.nr6bmkl.mongodb.net/?retryWrites=true&w=majority&appName=ClusterProyecto";
         try (MongoClient mongoClient = MongoClients.create(uri)) {
             System.out.println("\nConectado a la base de datos.\n");
@@ -40,7 +40,8 @@ public class dbManager {
                     .append("Facultad: ", facultad)
                     .append("Salones asginados", Salones)
                     .append("Laboratorios asginados", Laboratorios)
-                    .append("Estado", status);
+                    .append("Estado", status)
+                    .append("Fecha", fecha);
 
             transactions.insertOne(registro);
             System.out.println("\nBase de datos actualizada.\n");

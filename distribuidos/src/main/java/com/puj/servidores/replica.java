@@ -1,31 +1,28 @@
 package com.puj.servidores;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.zeromq.SocketType;
+import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 public class replica {
-    private static final String DB_URL = "jdbc:postgresql://postgres:5432/aulas";
-    private static final String DB_USER = "postgres";
-    private static final String DB_PASSWORD = "admin";
-    private static final int PORT = 5555;
     private static boolean isPrimary = false;
+    private static final long TIMEOUT = 10000;
 
     public static void main(String[] args) {
-        if(args.length != 2) {
-            System.out.println("\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles>\n");
+        if(args.length != 3) {
+            System.out.println("\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles> <direccion de servidor central>\n");
             System.exit(1);
         }
 
         final int can_Salones = Integer.parseInt(args[0]);
         final int can_Labs = Integer.parseInt(args[1]);
+        final String centralIP = (args[2]);
 
         //Laboratorios y salones
         List<String> salones = new ArrayList<>();
@@ -46,7 +43,7 @@ public class replica {
             laboratorios.add(l);
         }
         
-        new Thread(replica::monitorPrimary).start();
+        new Thread(() -> monitorPrimary(centralIP)).start();
 
         while (!isPrimary) {
             try {
@@ -59,26 +56,36 @@ public class replica {
         startAsPrimary();
     }
 
-    private static void monitorPrimary() {
-        try (ZMQ.Context context = ZMQ.context(1);
-             ZMQ.Socket subscriber = context.socket(ZMQ.SUB)) {
-            
-            subscriber.connect("tcp://central:5556");
-            subscriber.subscribe("ALIVE".getBytes());
+    private static void monitorPrimary(String IP) {
+        try (ZContext context = new ZContext()){
+            ZMQ.Socket centralSocket = context.createSocket(SocketType.SUB);
 
-            long lastBeat = System.currentTimeMillis();
-            final int TIMEOUT_MS = 15000;
+            String addressCentral = "tcp://" + IP + ":1092";
+            centralSocket.connect(addressCentral);
+            centralSocket.subscribe(ZMQ.SUBSCRIPTION_ALL);
+            
+            System.out.println("\nConexion creada con el servidor central, direccion: " + addressCentral + "\n");
+
+            long lastHeartbeat = System.currentTimeMillis();
 
             while (!isPrimary) {
-                String message = subscriber.recvStr(ZMQ.DONTWAIT);
-                if (message != null && message.equals("ALIVE")) {
-                    lastBeat = System.currentTimeMillis();
-                    System.out.println("[RÉPLICA] Heartbeat recibido");
-                } else if (System.currentTimeMillis() - lastBeat > TIMEOUT_MS) {
-                    System.out.println("[RÉPLICA] Alerta: conexion perdida con el servidor central. Promoviendo a primario...");
+                ZMQ.Poller poller = context.createPoller(1);
+                poller.register(centralSocket, ZMQ.Poller.POLLIN);
+
+                if (poller.poll(10000) > 0) {
+                    String msg = centralSocket.recvStr();
+                    if ("HEARTBEAT".equals(msg)) {
+                    lastHeartbeat = System.currentTimeMillis();
+                    System.out.println("\nHearbeat de central recibido...\n");
+                    }
+
+                } 
+                if (System.currentTimeMillis() - lastHeartbeat > TIMEOUT) {
+                    System.out.println("\n||Alerta: Conexion con servidor primario perdida, cambiando estado a activo||\n");
                     isPrimary = true;
                 }
-                Thread.sleep(1000);
+
+                Thread.sleep(3000);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,10 +93,12 @@ public class replica {
     }
 
     private static void startAsPrimary() {
-        System.out.println("[PRIMARIO] Iniciando servicios...");
-        
+        System.out.println("\nTomando cargo de servidor primario...\n");
+
+         /* 
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
+       
         try (ZMQ.Context context = ZMQ.context(1);
              ZMQ.Socket receiver = context.socket(ZMQ.ROUTER);
              Connection dbConn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
@@ -113,22 +122,129 @@ public class replica {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }*/
+    }
+
+    /* 
+    private static String handleRequest(String message, List<String> salonesDisponibles, List<String> laboratoriosDisponibles){
+        List<String> salonesAsignados = new ArrayList<>();
+        List<String> laboratoriosAsignados = new ArrayList<>();
+        String status = "";
+
+        Boolean ClassSuccess = true;
+        Boolean LabSuccess = true;
+        Boolean incomplete = false;
+        
+        long startTime;
+        long endTime;
+        long responseTime;
+
+        startTime = System.currentTimeMillis();
+       
+        //Procesar el mensaje
+        String[] parts = message.split("\\|");
+        String nombre = parts[0];
+        int numeroSalones = Integer.parseInt(parts[1]);
+        int numeroLaboratorios = Integer.parseInt(parts[2]);
+        String nombreFacultad = parts[3];
+        String semestrePrograma = parts[4];
+
+        System.out.println("\nNueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; " + numeroLaboratorios + " Laboratorios.");
+        System.out.println("(Semestre: " + semestrePrograma + ", facultad: " + nombreFacultad + ")\n");
+
+        //Realizar asignacion de salones
+
+        //Salones
+        if(salonesDisponibles.size() >= numeroSalones){
+            for(int i = 0; i < numeroSalones; i++){
+                salonesAsignados.add(salonesDisponibles.get(0));
+                salonesDisponibles.remove(0);
             }
-    }
+            ClassSuccess = true;
+        
+        }else{
+            System.out.println("Atencion: Salones insuficientes.\n");
 
-    private static String processRequest(String request, Connection dbConn) throws SQLException {
-        // Ejemplo: Asignar aula
-        String[] parts = request.split(":");
-        String facultadId = parts[0];
-        int aulasNeeded = Integer.parseInt(parts[1]);
-
-        try (PreparedStatement stmt = dbConn.prepareStatement(
-                "UPDATE aulas SET disponible = false WHERE tipo = 'AULA' AND disponible = true LIMIT ?")) {
+            if(salonesDisponibles.size() != 0){
+                for(int i = 0; i <= salonesDisponibles.size(); i++){
+                salonesAsignados.add(salonesDisponibles.get(0));
+                salonesDisponibles.remove(0);
+                }
+                ClassSuccess = false;
+            }
+            else{
+                incomplete = true;
+            }
             
-            stmt.setInt(1, aulasNeeded);
-            int updated = stmt.executeUpdate();
-
-            return updated >= aulasNeeded ? "OK:" + updated : "ERROR:Recursos insuficientes";
         }
-    }
+        System.out.println("Salones asignados a " + nombre +  ": " + salonesAsignados);
+
+        //Laboratorios
+        if(laboratoriosDisponibles.size() >= numeroLaboratorios){
+            for(int i = 0; i < numeroLaboratorios; i++){
+                laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
+                laboratoriosDisponibles.remove(0);
+            }
+            incomplete = false;
+            LabSuccess = true;
+        
+        }else if(salonesDisponibles.size() >= numeroLaboratorios){
+            System.out.println("\nAtencion: Laboratorios insuficientes, asignado laboratorios hibridos.\n");
+
+            for(int i = 0; i < laboratoriosDisponibles.size(); i++){
+                laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
+                laboratoriosDisponibles.remove(0);
+            }
+
+            for(int i = 0; i < numeroLaboratorios - laboratoriosAsignados.size(); i++){
+                laboratoriosAsignados.add(salonesDisponibles.get(0));
+                salonesDisponibles.remove(0);
+            }
+            incomplete = false;
+            LabSuccess = true;
+        }else{
+            System.out.println("\nAtencion: Laboratorios insuficientes.\n");
+
+            if(laboratoriosDisponibles.size() != 0){
+                for(int i = 0; i <= laboratoriosDisponibles.size(); i++){
+                    laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
+                    laboratoriosDisponibles.remove(0);
+                }
+            }
+            LabSuccess = false;
+        }
+        System.out.println("\nLaboratorios asignados a " + nombre +  ": " + laboratoriosAsignados);
+
+        //Estado de la peticion y registrar peticion
+        if(LabSuccess && ClassSuccess){
+            System.out.println("\nPeticion completada sin problemas\n");
+            status = "completado";
+            dbManager.writeAsign(nombre, salonesAsignados, laboratoriosAsignados, status, semestrePrograma, nombreFacultad);
+        }
+        else if(incomplete){
+            System.out.println("\nLa peticion no pudo ser completada.\n");
+            status = "pendiente";
+            dbManager.writePending(nombre, numeroSalones, numeroLaboratorios, nombreFacultad, semestrePrograma, LocalDate.now().toString());
+        }
+        else if(!LabSuccess || !ClassSuccess){
+            System.out.println("\nLa peticion no pudo ser completada en su totalidad\n");
+            status = "completado parcialmente";
+            dbManager.writeAsign(nombre, salonesAsignados, laboratoriosAsignados, status, semestrePrograma, nombreFacultad);
+        }
+        
+        System.out.println("\nSalones disponibles: " + salonesDisponibles);
+        System.out.println("Laboratorios disponibles: " + laboratoriosDisponibles);
+        System.out.println("\n");
+        
+
+        //Enviar respuesta
+        endTime = System.currentTimeMillis();
+        responseTime = endTime - startTime;
+
+        System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
+        getTimes(responseTime);
+        
+        String response = salonesAsignados + "|" + laboratoriosAsignados + "|" + status;
+        return response;
+    } */
 }

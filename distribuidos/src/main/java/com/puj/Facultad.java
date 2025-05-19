@@ -36,8 +36,7 @@ public class Facultad {
             String addressBackup = "tcp://" + backupIP + ":1090";
             ZMQ.Socket backupSocket = context.createSocket(SocketType.DEALER);
             backupSocket.connect(addressBackup);
-            System.out.println("Conectado al servidor de respaldo. Direccion: " + addressBackup + "\n");
-
+            
             System.out.println("Esperando peticiones de los programas...\n");
 
             //Recibir peticion
