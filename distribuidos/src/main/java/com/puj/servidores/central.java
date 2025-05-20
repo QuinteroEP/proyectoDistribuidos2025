@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.time.LocalDate;
 
 import org.zeromq.SocketType;
@@ -101,7 +102,7 @@ public class central {
 
                 // Enviar peticion a trabajador
                 executor.submit(() -> {
-                    String reply = handleRequest(message, salones, laboratorios);
+                    String reply = handleRequest(message, salones, laboratorios, BackupSocket);
                     socket.sendMore(id);
                     socket.sendMore("");
                     socket.send(reply);
@@ -110,8 +111,7 @@ public class central {
         }
     }
 
-    private static String handleRequest(String message, List<String> salonesDisponibles,
-            List<String> laboratoriosDisponibles) {
+    private static String handleRequest(String message, List<String> salonesDisponibles, List<String> laboratoriosDisponibles, ZMQ.Socket BackupSocket) {
         List<String> salonesAsignados = new ArrayList<>();
         List<String> laboratoriosAsignados = new ArrayList<>();
         String status = "";
@@ -228,6 +228,17 @@ public class central {
 
         System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
         getTimes(responseTime);
+
+        //Mantener servidor replica actualizado
+        new Thread(() -> {
+            System.out.println("Actualizando backup");
+            byte[] bytes_salones = ByteBuffer.allocate(4).putInt(salonesDisponibles.size()).array();
+            byte[] bytes_labs = ByteBuffer.allocate(4).putInt(laboratoriosDisponibles.size()).array();
+
+            BackupSocket.sendMore("Actualizacion");
+            BackupSocket.sendMore(bytes_salones);
+            BackupSocket.send(bytes_labs);
+        }).start();
 
         String response = salonesAsignados + "|" + laboratoriosAsignados + "|" + status;
         return response;
