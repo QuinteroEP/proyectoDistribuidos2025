@@ -12,6 +12,6 @@ RUN mvn dependency:copy-dependencies
 
 WORKDIR /app/distribuidos/target/classes
 
-ENTRYPOINT ["java", "-cp", ".:../dependency/*", "com.puj.servidores.central"]
+ENTRYPOINT ["java", "-cp", ".:../dependency/*", "com.puj.dbManager"]
 
 CMD []

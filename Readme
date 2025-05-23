@@ -21,4 +21,6 @@ Ejecucion:
 Docker:
     1:Abrir cmd e ir al directorio raiz del programa usando 'cd' (ejem: 'cd C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\)
     2: ejecutar el comando 'docker build -f dockerfile-<programa> -t distribuidos/<nombre> .' para constuir las imagenes de cada docker
-    3:Ejecutar cada docker con 'docker run -it distribuidos/<nombre> <parametros>'
+    3:Ejecutar cada docker con 'docker run distribuidos/<nombre> <parametros>'
+    3:Ejectuar el compose con 'docker-compose up'
+    4:Al terminar, apagar el compose con 'docker-compose down'

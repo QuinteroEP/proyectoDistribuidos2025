@@ -1,32 +1,32 @@
 services:
-  replica:
-    image: distribuidos/replica
-    build:
-      context: ./distribuidos/src/main/java/com/puj/
-      dockerfile: ../../../../dockerfile-replica
-    networks:
-      - mynetwork
-    depends_on:
-      - central
-      - postgres
-    environment:
-      - PRIMARY_IP=central
-      - DB_URL=jdbc:postgresql://postgres:5432/aulas
-      
   facultad:
     image: distribuidos/facultad
     build:
-      context: ./distribuidos/src/main/java/com/puj/Facultad.java
+      context: ./proyectoDistribuidos2025
     networks:
       - mynetwork
     command: ["A", "1", "10.150.102.169", "1081"]
 
-  academico:
+  programas:
     image: distribuidos/programa-academico
     build:
-      context: ./distribuidos/src/main/java/com/puj/Programa.java
-    depends_on:
-      - facultad
+      context: ./proyectoDistribuidos2025
+    networks:
+      - mynetwork
+    command: ["a", "1", "A", "2", "2", "1081"]
+
+  central:
+    image: distribuidos/programa-academico
+    build:
+      context: ./proyectoDistribuidos2025
+    networks:
+      - mynetwork
+    command: ["a", "1", "A", "2", "2", "1081"]
+
+  mongo:
+    image: distribuidos/programa-bd
+    build:
+      context: ./proyectoDistribuidos2025
     networks:
       - mynetwork
     command: ["a", "1", "A", "2", "2", "1081"]

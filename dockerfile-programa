@@ -7,8 +7,11 @@ COPY distribuidos/ /app/distribuidos
 WORKDIR /app/distribuidos
 
 RUN mvn compile
+
 RUN mvn dependency:copy-dependencies
 
 WORKDIR /app/distribuidos/target/classes
 
 ENTRYPOINT ["java", "-cp", ".:../dependency/*", "com.puj.Programa"]
+
+CMD []
