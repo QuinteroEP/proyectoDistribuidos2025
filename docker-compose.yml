@@ -6,7 +6,7 @@ services:
       dockerfile: dockerfile-central
     networks:
       - mynetwork
-    command: ["20", "10", "backup"]
+    command: ["20", "10"]
 
   Backup:
     image: distribuidos/replica
@@ -15,7 +15,7 @@ services:
       dockerfile: dockerfile-replica
     networks:
       - mynetwork
-    command: ["central", "10000"]
+    command: ["20", "10", "central", "10000"]
 
   facultad:
     image: distribuidos/facultad

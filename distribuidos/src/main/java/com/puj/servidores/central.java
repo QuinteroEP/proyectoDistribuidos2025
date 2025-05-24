@@ -23,15 +23,14 @@ public class central {
     public static dbManager manager;
 
     public static void main(String[] args) throws UnknownHostException {
-        if (args.length != 3) {
+        if (args.length != 2) {
             System.out.println(
-                    "\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles> <direccion de servidor de respaldo>\n");
+                    "\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles>\n");
             System.exit(1);
         }
 
         final int can_Salones = Integer.parseInt(args[0]);
         final int can_Labs = Integer.parseInt(args[1]);
-        final String backupIP = args[2];
 
         // Laboratorios y salones
         List<String> salones = new ArrayList<>();
