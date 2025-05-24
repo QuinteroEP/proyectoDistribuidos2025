@@ -64,17 +64,15 @@ public class replica {
                 e.printStackTrace();
             }
         }
-
         startAsPrimary(salones, laboratorios);
     }
 
     private static void monitorPrimary(String IP, Long TIMEOUT) {
         try (ZContext context = new ZContext()){
-            ZMQ.Socket centralSocket = context.createSocket(SocketType.SUB);
-
             String addressCentral = "tcp://" + IP + ":1092";
-            centralSocket.bind(addressCentral);
-            centralSocket.subscribe(ZMQ.SUBSCRIPTION_ALL);
+            ZMQ.Socket backupSocket = context.createSocket(SocketType.SUB);
+            backupSocket.connect(addressCentral);
+            backupSocket.subscribe("".getBytes()); 
             
             System.out.println("\nConexion creada con el servidor central, direccion: " + addressCentral + "\n");
 
@@ -82,17 +80,17 @@ public class replica {
 
             while (!isPrimary) {
                 ZMQ.Poller poller = context.createPoller(1);
-                poller.register(centralSocket, ZMQ.Poller.POLLIN);
+                poller.register(backupSocket, ZMQ.Poller.POLLIN);
 
                 if (poller.poll(10000) > 0) {
-                    String msg = centralSocket.recvStr();
+                    String msg = backupSocket.recvStr();
                     if ("HEARTBEAT".equals(msg)) {
                     lastHeartbeat = System.currentTimeMillis();
                     System.out.println("\nHearbeat de central recibido...\n");
                     }
                     else if ("Actualizacion".equals(msg) || "Inicio".equals(msg)){
-                        byte[] salonesSizeBytes = centralSocket.recv(0);
-                        byte[] labsSizeBytes = centralSocket.recv(0);
+                        byte[] salonesSizeBytes = backupSocket.recv(0);
+                        byte[] labsSizeBytes = backupSocket.recv(0);
 
                         salonesSize = ByteBuffer.wrap(salonesSizeBytes).getInt();
                         labsSize = ByteBuffer.wrap(labsSizeBytes).getInt();
@@ -101,12 +99,13 @@ public class replica {
                         System.out.println("Nuevo tamaño de laboratorios: " + labsSize);
                         lastHeartbeat = System.currentTimeMillis();
                         while (poller.poll(0) > 0) {
-                            centralSocket.recv(ZMQ.DONTWAIT); // Read and discard
+                            backupSocket.recv(ZMQ.DONTWAIT); // Read and discard
                         }
                     }
                 } 
                 if (System.currentTimeMillis() - lastHeartbeat > TIMEOUT) {
                     isPrimary = true;
+                    backupSocket.close();
                 }
 
                 Thread.sleep(3000);
@@ -123,8 +122,7 @@ public class replica {
             ZMQ.Socket socket = context.createSocket(SocketType.ROUTER);
             socket.bind("tcp://*:1092");
             try {
-                System.out.println(
-                        "\nServidor de respaldo abierto en el puerto 1092. Direccion " + InetAddress.getLocalHost() + "\n");
+                System.out.println("\nServidor de respaldo abierto como primario en el puerto 1092. Direccion " + InetAddress.getLocalHost() + "\n");
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }

@@ -43,10 +43,10 @@ public class central {
             socket.bind("tcp://*:1090");
             System.out.println("\nServidor central abierto en el puerto 1090. Direccion " + InetAddress.getLocalHost() + "\n");
 
-            String addressBackup = "tcp://" + backupIP + ":1092";
+            String addressBackup = "tcp://*:1092";
             ZMQ.Socket BackupSocket = context.createSocket(SocketType.PUB);
-            BackupSocket.connect(addressBackup);
-            System.out.println("Conectado con el servidor de respaldo, direccion: " + addressBackup + "\n");
+            BackupSocket.bind(addressBackup);
+            System.out.println("Puerto 1092 para servidor de respaldo abierto");
 
             //Proceso para heartbeats
             new Thread(() -> {
