@@ -26,13 +26,34 @@ public class replica {
     private static boolean isPrimary = false;
 
     public static void main(String[] args) {
-        if(args.length != 2) {
-            System.out.println("\nError: uso incorrecto. Se requieren los parametros <direccion de servidor central> <tiempo maximo de espera en Ms>\n");
+        if(args.length != 4) {
+            System.out.println("\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles> <direccion de servidor central> <tiempo maximo de espera en Ms>\n");
             System.exit(1);
         }
 
-        final String centralIP = args[0];
-        final long TIMEOUT = Long.parseLong(args[1]);
+        final int can_Salones = Integer.parseInt(args[0]);
+        final int can_Labs = Integer.parseInt(args[1]);
+        final String centralIP = args[2];
+        final long TIMEOUT = Long.parseLong(args[3]);
+
+        // Laboratorios y salones
+        List<String> salones = new ArrayList<>();
+        List<String> laboratorios = new ArrayList<>();
+
+        // Popular listas de salones
+        for (int i = 1; i <= can_Salones; i++) {
+            String n = String.valueOf(i);
+            String s = n + "S";
+
+            salones.add(s);
+        }
+
+        for (int i = 1; i <= can_Labs; i++) {
+            String n = String.valueOf(i);
+            String l = n + "L";
+
+            laboratorios.add(l);
+        }
 
         new Thread(() -> monitorPrimary(centralIP, TIMEOUT)).start();
 
@@ -44,7 +65,7 @@ public class replica {
             }
         }
 
-        startAsPrimary();
+        startAsPrimary(salones, laboratorios);
     }
 
     private static void monitorPrimary(String IP, Long TIMEOUT) {
@@ -52,7 +73,7 @@ public class replica {
             ZMQ.Socket centralSocket = context.createSocket(SocketType.SUB);
 
             String addressCentral = "tcp://" + IP + ":1092";
-            centralSocket.connect(addressCentral);
+            centralSocket.bind(addressCentral);
             centralSocket.subscribe(ZMQ.SUBSCRIPTION_ALL);
             
             System.out.println("\nConexion creada con el servidor central, direccion: " + addressCentral + "\n");
@@ -69,7 +90,7 @@ public class replica {
                     lastHeartbeat = System.currentTimeMillis();
                     System.out.println("\nHearbeat de central recibido...\n");
                     }
-                    else if ("Actualizacion".equals(msg)){
+                    else if ("Actualizacion".equals(msg) || "Inicio".equals(msg)){
                         byte[] salonesSizeBytes = centralSocket.recv(0);
                         byte[] labsSizeBytes = centralSocket.recv(0);
 
@@ -95,12 +116,8 @@ public class replica {
         }
     }
 
-    private static void startAsPrimary() {
+    private static void startAsPrimary(List<String> salones, List<String> laboratorios) {
         System.out.println("\n||Alerta: Conexion con servidor primario perdida, cambiando estado a activo||\n");
-
-        // Laboratorios y salones
-        List<String> salones = new ArrayList<>();
-        List<String> laboratorios = new ArrayList<>();
 
         try (ZContext context = new ZContext()) {
             ZMQ.Socket socket = context.createSocket(SocketType.ROUTER);
@@ -112,19 +129,13 @@ public class replica {
                 e.printStackTrace();
             }
 
-            // Popular listas de salones
-            for (int i = 1; i <= salonesSize; i++) {
-                String n = String.valueOf(i);
-                String s = n + "S";
-
-                salones.add(s);
+            // Actualizar lista de salones
+            for (int i = 1; i <= salones.size() - salonesSize; i++) {
+                salones.remove(0);
             }
 
-            for (int i = 1; i <= labsSize; i++) {
-                String n = String.valueOf(i);
-                String l = n + "L";
-
-                laboratorios.add(l);
+            for (int i = 1; i <= laboratorios.size() - labsSize; i++) {
+                laboratorios.remove(0);
             }
 
             System.out.println("Salones disponibles: " + salones);

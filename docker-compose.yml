@@ -6,8 +6,6 @@ services:
       dockerfile: dockerfile-central
     networks:
       - mynetwork
-    ports:
-      - "1090:1090"
     command: ["20", "10", "backup"]
 
   Backup:
@@ -17,8 +15,6 @@ services:
       dockerfile: dockerfile-replica
     networks:
       - mynetwork
-    ports:
-      - "1092:1092"
     command: ["central", "10000"]
 
   facultad:
@@ -28,8 +24,6 @@ services:
       dockerfile: dockerfile-facultad
     networks:
       - mynetwork
-    ports:
-      - "1081:1081"
     command: ["Ingeniería", "2025-1", "central", "1081", "backup"]
 
   programas:
@@ -47,8 +41,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: user
       MONGO_INITDB_ROOT_PASSWORD: pass
-    ports:
-      - "27017:27017"
     networks:
       - mynetwork
 

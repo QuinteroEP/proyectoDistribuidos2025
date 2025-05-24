@@ -20,6 +20,8 @@
             "mainClass": "com.puj.servidores.replica",
             "projectName": "distribuidos",
             "args": [
+                "20",
+                "10",
                 "192.168.10.4",
                 7000
             ]

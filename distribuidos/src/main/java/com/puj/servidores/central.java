@@ -41,21 +41,15 @@ public class central {
         try (ZContext context = new ZContext()) {
             ZMQ.Socket socket = context.createSocket(SocketType.ROUTER);
             socket.bind("tcp://*:1090");
-            System.out.println(
-                    "\nServidor central abierto en el puerto 1090. Direccion " + InetAddress.getLocalHost() + "\n");
+            System.out.println("\nServidor central abierto en el puerto 1090. Direccion " + InetAddress.getLocalHost() + "\n");
 
-            String addressBackup = "tcp://*:1092";
+            String addressBackup = "tcp://" + backupIP + ":1092";
             ZMQ.Socket BackupSocket = context.createSocket(SocketType.PUB);
-            BackupSocket.bind(addressBackup);
+            BackupSocket.connect(addressBackup);
             System.out.println("Conectado con el servidor de respaldo, direccion: " + addressBackup + "\n");
 
             //Proceso para heartbeats
             new Thread(() -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 try (ZContext heartbeatContext = new ZContext()) {
                     while (!Thread.currentThread().isInterrupted()) {
                         BackupSocket.send("HEARTBEAT");
