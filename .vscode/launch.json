@@ -8,8 +8,8 @@
             "mainClass": "com.puj.servidores.central",
             "projectName": "distribuidos",
             "args": [
-                "20",
-                "10"
+                "30",
+                "12"
             ]
         },
         {
@@ -19,8 +19,8 @@
             "mainClass": "com.puj.servidores.replica",
             "projectName": "distribuidos",
             "args": [
-                "20",
-                "10",
+                "30",
+                "12",
                 "192.168.10.34",
                 7000
             ]
@@ -57,6 +57,20 @@
                 "2025-1",
                 "192.168.10.34",
                 "1082",
+                "192.168.10.34"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Facultad 3",
+            "request": "launch",
+            "mainClass": "com.puj.Facultad",
+            "projectName": "distribuidos",
+            "args": [
+                "Ciencias Sociales",
+                "2025-1",
+                "192.168.10.34",
+                "1083",
                 "192.168.10.34"
             ]
         },
@@ -157,6 +171,104 @@
                 "1",
                 "192.168.10.34:1081"
             ]
+        },
+        {
+            "type": "java",
+            "name": "P1C1",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Ingeniería de Sistemas",
+                "2025-1",
+                "Ingeniería",
+                "5",
+                "2",
+                "192.168.10.34:1081"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "P1C2",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Ingeniería Civil",
+                "2025-1",
+                "Ingeniería",
+                "5",
+                "2",
+                "192.168.10.34:1081"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "P1C3",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Big Data",
+                "2025-1",
+                "Tecnología",
+                "5",
+                "2",
+                "192.168.10.34:1082"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "P1C4",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Psicología",
+                "2025-1",
+                "Ciencias Sociales",
+                "5",
+                "2",
+                "192.168.10.34:1083"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "P1C5",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Sociología",
+                "2025-1",
+                "Ciencias Sociales",
+                "5",
+                "2",
+                "192.168.10.34:1083"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "P1C6",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Antropología",
+                "2025-1",
+                "Ciencias Sociales",
+                "5",
+                "2",
+                "192.168.10.34:1083"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "P1C7",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Redes y Telecomunicaciones",
+                "2025-1",
+                "Tecnología",
+                "5",
+                "2",
+                "192.168.10.34:1082"
+            ]
         }
     ],
     "compounds": [
@@ -174,7 +286,7 @@
             "central",
             "database",
             "Facultad 1",
-            "Programa 1",
+            "P1C1",
             "replica"
         ]
     },
@@ -198,6 +310,54 @@
             "Programa 2",
             "Programa 3",
             "Programa 4"
+        ]
+    },
+    {
+        "name": "Caso 1: Muchas peticiones",
+        "configurations": [
+            "Facultad 1",
+            "Facultad 2",
+            "Facultad 3",
+            "P1C1",
+            "P1C2",
+            "P1C3",
+            "P1C4",
+            "P1C5",
+            "P1C6",
+        ]
+    },
+    {
+        "name": "Caso 2: Muchas peticiones no completadas",
+        "configurations": [
+            "Facultad 1",
+            "Facultad 2",
+            "Facultad 3",
+            "P1C1",
+            "P1C2",
+            "P1C3",
+            "P1C4",
+            "P1C5",
+            "P1C6",
+            "P1C7"
+        ]
+    },
+    {
+        "name": "Caso 3: Central",
+        "configurations": [
+            "Facultad 1",
+            "Facultad 2",
+            "P1C1",
+            "P1C2",
+            "P1C3"
+        ]
+    },
+    {
+        "name": "Caso 3: Replica",
+        "configurations": [
+            "Facultad 3",
+            "P1C4",
+            "P1C5",
+            "P1C6"
         ]
     }
 ]

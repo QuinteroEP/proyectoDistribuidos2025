@@ -101,7 +101,7 @@ public class central {
             System.out.println("Esperando peticiones...\n");
 
             // Crear trabajadores
-            for (int threadNbr = 0; threadNbr < 5; threadNbr++){
+            for (int threadNbr = 0; threadNbr < 10; threadNbr++){
                 new Thread(new handleRequest(context, salones, laboratorios, updateSocket, prometheusTimes)).start();
             }
                 
@@ -179,13 +179,12 @@ public class central {
                     ClassSuccess = true;
                 } else {
                     System.out.println("Atencion: Salones insuficientes.\n");
-
+                    ClassSuccess = false;
                     if (salonesDisponibles.size() != 0) {
-                        for (int i = 0; i <= salonesDisponibles.size(); i++) {
+                         while (!salonesDisponibles.isEmpty()) {
                             salonesAsignados.add(salonesDisponibles.get(0));
                             salonesDisponibles.remove(0);
                         }
-                        ClassSuccess = false;
                     } else {
                         incomplete = true;
                     }
