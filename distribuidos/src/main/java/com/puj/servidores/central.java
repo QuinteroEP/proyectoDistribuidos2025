@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
 
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
+
+import io.prometheus.metrics.core.datapoints.Timer;
+import io.prometheus.metrics.core.metrics.Histogram;
+import io.prometheus.metrics.exporter.httpserver.HTTPServer;
 
 import com.puj.dbManager;
 
@@ -22,7 +25,7 @@ public class central {
     public static long runningTimeTotal = 0;
     public static dbManager manager;
 
-    public static void main(String[] args) throws UnknownHostException {
+    public static void main(String[] args) throws IOException {
         if (args.length != 2) {
             System.out.println(
                     "\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles>\n");
@@ -35,6 +38,16 @@ public class central {
         // Laboratorios y salones
         List<String> salones = new ArrayList<>();
         List<String> laboratorios = new ArrayList<>();
+
+        //Metricas para Prometheus
+        final Histogram prometheusTimes = Histogram.builder()
+            .name("central_response_time")
+            .help("Tiempo de respuesta en Segundos")
+            .register();
+
+        HTTPServer server = HTTPServer.builder()
+                .port(9400)
+                .buildAndStart();
 
         // Crear Socket
         try (ZContext context = new ZContext()) {
@@ -95,7 +108,7 @@ public class central {
 
                 // Enviar peticion a trabajador
                 executor.submit(() -> {
-                    String reply = handleRequest(message, salones, laboratorios, BackupSocket);
+                    String reply = handleRequest(message, salones, laboratorios, BackupSocket, prometheusTimes);
                     socket.sendMore(id);
                     socket.sendMore("");
                     socket.send(reply);
@@ -104,7 +117,7 @@ public class central {
         }
     }
 
-    private static String handleRequest(String message, List<String> salonesDisponibles, List<String> laboratoriosDisponibles, ZMQ.Socket BackupSocket) {
+    private static String handleRequest(String message, List<String> salonesDisponibles, List<String> laboratoriosDisponibles, ZMQ.Socket BackupSocket, Histogram prometheusTimer) {
         List<String> salonesAsignados = new ArrayList<>();
         List<String> laboratoriosAsignados = new ArrayList<>();
         String status = "";
@@ -117,103 +130,111 @@ public class central {
         long endTime;
         long responseTime;
 
+        //Timer interno
         startTime = System.currentTimeMillis();
 
-        // Procesar el mensaje
-        String[] parts = message.split("\\|");
-        String nombre = parts[0];
-        int numeroSalones = Integer.parseInt(parts[1]);
-        int numeroLaboratorios = Integer.parseInt(parts[2]);
-        String nombreFacultad = parts[3];
-        String semestrePrograma = parts[4];
+        //Timer de Prometheus
+        Timer timer = prometheusTimer.startTimer();
+        try{
+            // Procesar el mensaje
+            String[] parts = message.split("\\|");
+            String nombre = parts[0];
+            int numeroSalones = Integer.parseInt(parts[1]);
+            int numeroLaboratorios = Integer.parseInt(parts[2]);
+            String nombreFacultad = parts[3];
+            String semestrePrograma = parts[4];
 
-        System.out.println("\nNueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; "
-                + numeroLaboratorios + " Laboratorios.");
-        System.out.println("(Semestre: " + semestrePrograma + ", facultad: " + nombreFacultad + ")\n");
+            System.out.println("\nNueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; "
+                    + numeroLaboratorios + " Laboratorios.");
+            System.out.println("(Semestre: " + semestrePrograma + ", facultad: " + nombreFacultad + ")\n");
 
-        // Realizar asignacion de salones
+            // Realizar asignacion de salones
 
-        // Salones
-        if (salonesDisponibles.size() >= numeroSalones) {
-            for (int i = 0; i < numeroSalones; i++) {
-                salonesAsignados.add(salonesDisponibles.get(0));
-                salonesDisponibles.remove(0);
-            }
-            ClassSuccess = true;
-
-        } else {
-            System.out.println("Atencion: Salones insuficientes.\n");
-
-            if (salonesDisponibles.size() != 0) {
-                for (int i = 0; i <= salonesDisponibles.size(); i++) {
+            // Salones
+            if (salonesDisponibles.size() >= numeroSalones) {
+                for (int i = 0; i < numeroSalones; i++) {
                     salonesAsignados.add(salonesDisponibles.get(0));
                     salonesDisponibles.remove(0);
                 }
-                ClassSuccess = false;
+                ClassSuccess = true;
+
             } else {
-                incomplete = true;
+                System.out.println("Atencion: Salones insuficientes.\n");
+
+                if (salonesDisponibles.size() != 0) {
+                    for (int i = 0; i <= salonesDisponibles.size(); i++) {
+                        salonesAsignados.add(salonesDisponibles.get(0));
+                        salonesDisponibles.remove(0);
+                    }
+                    ClassSuccess = false;
+                } else {
+                    incomplete = true;
+                }
+
             }
+            System.out.println("Salones asignados a " + nombre + ": " + salonesAsignados);
 
-        }
-        System.out.println("Salones asignados a " + nombre + ": " + salonesAsignados);
-
-        // Laboratorios
-        if (laboratoriosDisponibles.size() >= numeroLaboratorios) {
-            for (int i = 0; i < numeroLaboratorios; i++) {
-                laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
-                laboratoriosDisponibles.remove(0);
-            }
-            incomplete = false;
-            LabSuccess = true;
-
-        } else if (salonesDisponibles.size() >= numeroLaboratorios) {
-            System.out.println("\nAtencion: Laboratorios insuficientes, asignado laboratorios hibridos.\n");
-
-            for (int i = 0; i < laboratoriosDisponibles.size(); i++) {
-                laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
-                laboratoriosDisponibles.remove(0);
-            }
-
-            for (int i = 0; i < numeroLaboratorios - laboratoriosAsignados.size(); i++) {
-                laboratoriosAsignados.add(salonesDisponibles.get(0));
-                salonesDisponibles.remove(0);
-            }
-            incomplete = false;
-            LabSuccess = true;
-        } else {
-            System.out.println("\nAtencion: Laboratorios insuficientes.\n");
-
-            if (laboratoriosDisponibles.size() != 0) {
-                for (int i = 0; i <= laboratoriosDisponibles.size(); i++) {
+            // Laboratorios
+            if (laboratoriosDisponibles.size() >= numeroLaboratorios) {
+                for (int i = 0; i < numeroLaboratorios; i++) {
                     laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
                     laboratoriosDisponibles.remove(0);
                 }
+                incomplete = false;
+                LabSuccess = true;
+
+            } else if (salonesDisponibles.size() >= numeroLaboratorios) {
+                System.out.println("\nAtencion: Laboratorios insuficientes, asignado laboratorios hibridos.\n");
+
+                for (int i = 0; i < laboratoriosDisponibles.size(); i++) {
+                    laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
+                    laboratoriosDisponibles.remove(0);
+                }
+
+                for (int i = 0; i < numeroLaboratorios - laboratoriosAsignados.size(); i++) {
+                    laboratoriosAsignados.add(salonesDisponibles.get(0));
+                    salonesDisponibles.remove(0);
+                }
+                incomplete = false;
+                LabSuccess = true;
+            } else {
+                System.out.println("\nAtencion: Laboratorios insuficientes.\n");
+
+                if (laboratoriosDisponibles.size() != 0) {
+                    for (int i = 0; i <= laboratoriosDisponibles.size(); i++) {
+                        laboratoriosAsignados.add(laboratoriosDisponibles.get(0));
+                        laboratoriosDisponibles.remove(0);
+                    }
+                }
+                LabSuccess = false;
             }
-            LabSuccess = false;
-        }
-        System.out.println("\nLaboratorios asignados a " + nombre + ": " + laboratoriosAsignados);
+            System.out.println("\nLaboratorios asignados a " + nombre + ": " + laboratoriosAsignados);
 
-        // Estado de la peticion y registrar peticion
-        if (LabSuccess && ClassSuccess) {
-            System.out.println("\nPeticion completada sin problemas\n");
-            status = "completado";
-            dbManager.writeAsign(nombre, salonesAsignados, laboratoriosAsignados, status, semestrePrograma,
-                    nombreFacultad, LocalDate.now().toString());
-        } else if (incomplete) {
-            System.out.println("\nLa peticion no pudo ser completada.\n");
-            status = "pendiente";
-            dbManager.writePending(nombre, numeroSalones, numeroLaboratorios, nombreFacultad, semestrePrograma,
-                    LocalDate.now().toString());
-        } else if (!LabSuccess || !ClassSuccess) {
-            System.out.println("\nLa peticion no pudo ser completada en su totalidad\n");
-            status = "completado parcialmente";
-            dbManager.writeAsign(nombre, salonesAsignados, laboratoriosAsignados, status, semestrePrograma,
-                    nombreFacultad, LocalDate.now().toString());
-        }
+            // Estado de la peticion y registrar peticion
+            if (LabSuccess && ClassSuccess) {
+                System.out.println("\nPeticion completada sin problemas\n");
+                status = "completado";
+                dbManager.writeAsign(nombre, salonesAsignados, laboratoriosAsignados, status, semestrePrograma,
+                        nombreFacultad, LocalDate.now().toString());
+            } else if (incomplete) {
+                System.out.println("\nLa peticion no pudo ser completada.\n");
+                status = "pendiente";
+                dbManager.writePending(nombre, numeroSalones, numeroLaboratorios, nombreFacultad, semestrePrograma,
+                        LocalDate.now().toString());
+            } else if (!LabSuccess || !ClassSuccess) {
+                System.out.println("\nLa peticion no pudo ser completada en su totalidad\n");
+                status = "completado parcialmente";
+                dbManager.writeAsign(nombre, salonesAsignados, laboratoriosAsignados, status, semestrePrograma,
+                        nombreFacultad, LocalDate.now().toString());
+            }
 
-        System.out.println("\nSalones disponibles: " + salonesDisponibles);
-        System.out.println("Laboratorios disponibles: " + laboratoriosDisponibles);
+            System.out.println("\nSalones disponibles: " + salonesDisponibles);
+            System.out.println("Laboratorios disponibles: " + laboratoriosDisponibles);
         System.out.println("\n");
+        }
+        finally{
+            timer.observeDuration();
+        }
 
         // Enviar respuesta
         endTime = System.currentTimeMillis();
