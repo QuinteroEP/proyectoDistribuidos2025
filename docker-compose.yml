@@ -1,35 +1,86 @@
 services:
   replica:
-    image: distribuidos/replica
     build:
-      context: ./distribuidos/src/main/java/com/puj/
-      dockerfile: ../../../../dockerfile-replica
+      context: .
+      dockerfile: dockerfile-replica
+    image: distribuidos/replica
     networks:
       - mynetwork
     depends_on:
-      - central
       - postgres
+    command: ["broker", "15000"]  # <--- parámetros requeridos por replica.java
     environment:
       - PRIMARY_IP=central
       - DB_URL=jdbc:postgresql://postgres:5432/aulas
-      
-  facultad:
-    image: distribuidos/facultad
+
+  broker:
     build:
-      context: ./distribuidos/src/main/java/com/puj/Facultad.java
+      context: .
+      dockerfile: dockerfile-broker
+    image: distribuidos/broker
     networks:
       - mynetwork
-    command: ["A", "1", "10.150.102.169", "1081"]
+    ports:
+      - "5555:5555"
+      - "5556:5556"
+
+  facultad:
+    build:
+      context: .
+      dockerfile: dockerfile-facultad
+    image: distribuidos/facultad
+    networks:
+      - mynetwork
+    command: ["Ingeniería", "2025-2", "broker", "5555", "broker"]
+    depends_on:
+      - broker
 
   academico:
-    image: distribuidos/programa-academico
     build:
-      context: ./distribuidos/src/main/java/com/puj/Programa.java
+      context: .
+      dockerfile: dockerfile-programa
+    image: distribuidos/programa-academico
     depends_on:
       - facultad
     networks:
       - mynetwork
-    command: ["a", "1", "A", "2", "2", "1081"]
+    command: ["Sistemas", "2025-2", "Ingeniería", "3", "2", "facultad:5555"]
+
+  centralworker1:
+    build:
+      context: .
+      dockerfile: dockerfile-worker
+    image: distribuidos/worker
+    networks:
+      - mynetwork
+    command: ["10", "5"]
+    depends_on:
+      - broker
+
+  centralworker2:
+    build:
+      context: .
+      dockerfile: dockerfile-worker
+    image: distribuidos/worker
+    networks:
+      - mynetwork
+    command: ["10", "5"]
+    depends_on:
+      - broker
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: aulas
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+
+volumes:
+  pgdata:
 
 networks:
   mynetwork:

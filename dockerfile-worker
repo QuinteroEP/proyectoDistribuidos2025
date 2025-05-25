@@ -8,4 +8,4 @@ RUN mvn compile
 RUN mvn dependency:copy-dependencies
 
 WORKDIR /app/target/classes
-ENTRYPOINT ["java", "-cp", ".:../dependency/*", "com.puj.Facultad"]
+ENTRYPOINT ["java", "-cp", ".:../dependency/*", "com.puj.servidores.CentralWorker"]
