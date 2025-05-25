@@ -54,6 +54,9 @@ public class replica {
 
             laboratorios.add(l);
         }
+        
+        salonesSize = can_Salones;
+        labsSize = can_Labs;
 
         new Thread(() -> monitorPrimary(centralIP, TIMEOUT)).start();
 
