@@ -57,8 +57,8 @@ public class Facultad {
                 String semestrePrograma = parts[1]; 
 
                 //Enviar mensaje
-                String request = nombrePrograma + "|" + numeroSalones + "|" + numeroLaboratorios + "|" + nombreFacultad + "|" + semestrePrograma;
-                sendSocket.sendMore(""); //Mensaje vacio 
+                String request = nombrePrograma + "|" + numeroSalones + "|" + numeroLaboratorios + "|" + nombreFacultad + "|" + semestrePrograma; 
+                sendSocket.sendMore(""); 
                 sendSocket.send(request.getBytes(ZMQ.CHARSET), 0);
 
                 //Verficar conexiones
