@@ -13,6 +13,16 @@
             ]
         },
         {
+          "type": "java",
+          "name": "broker",
+          "request": "launch",
+          "mainClass": "com.puj.servidores.Broker",
+          "projectName": "distribuidos",
+          "args": [
+            "380", "60", "2"
+          ]
+        },
+        {
             "type": "java",
             "name": "replica",
             "request": "launch",
@@ -71,6 +81,20 @@
                 "2025-1",
                 "192.168.10.34",
                 "1083",
+                "192.168.10.34"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Facultad 4",
+            "request": "launch",
+            "mainClass": "com.puj.Facultad",
+            "projectName": "distribuidos",
+            "args": [
+                "Ingeniería",
+                "2025-3",
+                "192.168.10.34",
+                "1081",
                 "192.168.10.34"
             ]
         },
@@ -269,11 +293,67 @@
                 "2",
                 "192.168.10.34:1082"
             ]
-        }
+        },
+        {
+            "type": "java",
+            "name": "LBP1",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Ingeniería de Sistemas",
+                "2025-1",
+                "Ingeniería",
+                "10",
+                "0",
+                "192.168.10.34:1081"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "LBP2",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Ingeniería Electrónica",
+                "2025-1",
+                "Ingeniería",
+                "0",
+                "4",
+                "192.168.10.34:1081"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "LBP3",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Ingeniería de Sistemas",
+                "2025-3",
+                "Ingeniería",
+                "0",
+                "4",
+                "192.168.10.34:1081"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "LBP4",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Ingeniería Electrónica",
+                "2025-3",
+                "Ingeniería",
+                "0",
+                "4",
+                "192.168.10.34:1081"
+            ]
+        },
     ],
     "compounds": [
     {
-        "name": "Quicksetup",
+        "name": "Quicksetup Async",
         "configurations": [
             "central",
             "database",
@@ -281,9 +361,27 @@
         ]
     },
     {
-        "name": "Launch all",
+        "name": "Quicksetup Broker",
+        "configurations": [
+            "broker",
+            "database",
+            "replica"
+        ]
+    },
+    {
+        "name": "Test all Async",
         "configurations": [
             "central",
+            "database",
+            "Facultad 1",
+            "P1C1",
+            "replica"
+        ]
+    },
+    {
+        "name": "Test all Broker",
+        "configurations": [
+            "broker",
             "database",
             "Facultad 1",
             "P1C1",
@@ -313,7 +411,23 @@
         ]
     },
     {
-        "name": "Caso 1: Muchas peticiones",
+        "name": "Caso 1: Load Balancer 2 programas",
+        "configurations": [
+            "Facultad 1",
+            "LBP1",
+            "LBP2",
+        ]
+    },
+    {
+        "name": "Caso 2: Load Balancer 2 programas diferente semestre",
+        "configurations": [
+            "Facultad 4",
+            "LBP3",
+            "LBP4",
+        ]
+    },
+    {
+        "name": "Caso 3: Asincrono Muchas peticiones",
         "configurations": [
             "Facultad 1",
             "Facultad 2",
@@ -327,7 +441,7 @@
         ]
     },
     {
-        "name": "Caso 2: Muchas peticiones no completadas",
+        "name": "Caso 4: Asincrono Muchas peticiones no completadas",
         "configurations": [
             "Facultad 1",
             "Facultad 2",
@@ -342,7 +456,7 @@
         ]
     },
     {
-        "name": "Caso 3: Central",
+        "name": "Caso 5: Asincrono Central",
         "configurations": [
             "Facultad 1",
             "Facultad 2",
@@ -352,7 +466,7 @@
         ]
     },
     {
-        "name": "Caso 3: Replica",
+        "name": "Caso 5: Asincrono Replica",
         "configurations": [
             "Facultad 3",
             "P1C4",

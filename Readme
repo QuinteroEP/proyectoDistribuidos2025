@@ -7,7 +7,7 @@ Este programa es una aplicacion distribuida para la asignacion de salones y labo
     1: Facultades
     2: Pogramas academicos
     3: Un servidor central que maneja las solicitudos
-    4: Un servidor replica que recibe heartbeats del servidor central
+    4: Un servidor replica que recibe heartbeats del servidor central y maneja las peticiones en caso de que el servidor primario no este disponible
     5: Una base de datos en mongoDB
 
 Compilacion:
@@ -21,6 +21,8 @@ Ejecucion:
 
 Docker:
     1:Abrir cmd e ir al directorio raiz del programa usando 'cd' (ejem: 'cd C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\)
-    2:ejecutar el comando 'docker-compose build' para crear el compose
-    3:Ejectuar el compose con 'docker-compose up'
-    4:Al terminar, apagar el compose con 'docker-compose down'
+    2:Ejecutar el comando 'docker build -f dockerfile-<nombre> -t distribuidos/<nombre> .' para construir las imagenes de cada docker
+    2.1:Todas las imagenes deben tener el mismo nombre que se indica en el docker-compose
+    3:Ejecutar el comando 'docker-compose -f <nombre>.yml build' para crear el compose
+    4:Ejectuar el compose con 'docker-compose -f <nombre>.yml up'
+    5:Al terminar, apagar el compose con 'docker-compose -f <nombre>.yml down'
