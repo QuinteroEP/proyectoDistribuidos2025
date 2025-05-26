@@ -1,17 +1,14 @@
 FROM maven:3.8.5-openjdk-17-slim
 
 WORKDIR /app
-
-COPY distribuidos/ /app/distribuidos
-
-WORKDIR /app/distribuidos
+COPY distribuidos/pom.xml /app/pom.xml
+COPY distribuidos/src /app/src
 
 RUN mvn compile
 
 RUN mvn dependency:copy-dependencies
 
-WORKDIR /app/distribuidos/target/classes
-
+WORKDIR /app/target/classes
 ENTRYPOINT ["java", "-cp", ".:../dependency/*", "com.puj.Programa"]
 
 CMD []
