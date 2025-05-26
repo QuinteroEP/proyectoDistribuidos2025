@@ -1,5 +1,5 @@
 Universidad Javeriana - Bogotá Colombia 2025
-Ingenieria de Sistemas - Introduccion a sistemas Distribuidos
+Ingenieria de Sistemas - Proyecto Introduccion a sistemas Distribuidos
 
 Autores: Pablo Quintero, Juan Vargas, Johan Berrio
 
@@ -7,7 +7,8 @@ Este programa es una aplicacion distribuida para la asignacion de salones y labo
     1: Facultades
     2: Pogramas academicos
     3: Un servidor central que maneja las solicitudos
-    4: Un servidor replica que maneja la base de datos
+    4: Un servidor replica que recibe heartbeats del servidor central
+    5: Una base de datos en mongoDB
 
 Compilacion:
     1:Abrir cmd e ir al directorio raiz del programa usando 'cd' (ejem: 'cd C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\)
@@ -20,5 +21,6 @@ Ejecucion:
 
 Docker:
     1:Abrir cmd e ir al directorio raiz del programa usando 'cd' (ejem: 'cd C:\Users\John\Desktop\proyectoDistribuidos2025\distribuidos\)
-    2: ejecutar el comando 'docker build -f dockerfile-<programa> -t distribuidos/<nombre> .' para constuir las imagenes de cada docker
-    3:Ejecutar cada docker con 'docker run -it distribuidos/<nombre> <parametros>'
+    2:ejecutar el comando 'docker-compose build' para crear el compose
+    3:Ejectuar el compose con 'docker-compose up'
+    4:Al terminar, apagar el compose con 'docker-compose down'

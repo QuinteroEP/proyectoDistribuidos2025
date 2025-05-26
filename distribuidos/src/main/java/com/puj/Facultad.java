@@ -2,8 +2,10 @@ package com.puj;
 
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
+import org.zeromq.ZFrame;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Poller;
+import org.zeromq.ZMsg;
 
 public class Facultad {
     private static final long REQUEST_TIMEOUT = 5000;
@@ -31,7 +33,7 @@ public class Facultad {
 
             //Servidor Central - asincrono
             String addressCentral = "tcp://" + serverIP + ":1090";
-            ZMQ.Socket sendSocket = context.createSocket(SocketType.DEALER);
+            ZMQ.Socket sendSocket = context.createSocket(SocketType.REQ);
             sendSocket.connect(addressCentral);
             System.out.println("Conectado al servidor central. Direccion: " + addressCentral + "\n");
 
@@ -57,17 +59,29 @@ public class Facultad {
                 String semestrePrograma = parts[1]; 
 
                 //Enviar mensaje
-                String request = nombrePrograma + "|" + numeroSalones + "|" + numeroLaboratorios + "|" + nombreFacultad + "|" + semestrePrograma;
-                sendSocket.sendMore(""); //Mensaje vacio 
-                sendSocket.send(request.getBytes(ZMQ.CHARSET), 0);
+                String request = nombrePrograma + "|" + numeroSalones + "|" + numeroLaboratorios + "|" + nombreFacultad + "|" + semestrePrograma; 
+                
+                sendSocket.send(request);
+
+                //Recibir y procesar respuesta
+                System.out.println("\nPeticion enviada, esperando respuesta...\n");
+                byte[] reply;
 
                 //Verficar conexiones
                 int rc = poller.poll(REQUEST_TIMEOUT);
                 if (poller.pollin(0)) {
+                    reply = sendSocket.recv(0);
+
+                    String replyString = new String(reply, ZMQ.CHARSET);
+                    String[] partsResponse = replyString.split("\\|");
+
+                    System.out.println("Peticion completada. \nSalones: " + partsResponse[0] + "\nLaboratorios: " + partsResponse[1]);
+                    System.out.println("Status: " + partsResponse[2]);
+                    receiveSocket.send(replyString);
                     //System.out.println("\nServidor central funcionando\n");
                 }
                 else if (rc == 0){
-                    //System.out.println("\nProblema sospechado con el servidor central\n");
+                    System.out.println("\nProblema sospechado con el servidor central\n");
 
                     poller.unregister(sendSocket);
                     context.destroySocket(sendSocket);
@@ -84,19 +98,6 @@ public class Facultad {
                     sendSocket.sendMore(""); //Mensaje vacio 
                     sendSocket.send(request.getBytes(ZMQ.CHARSET), 0);
                 }
-
-                //Recibir y procesar respuesta
-                System.out.println("\nPeticion enviada, esperando respuesta...\n");
-                sendSocket.recv(0); 
-                byte[] reply = sendSocket.recv(0);
-
-                String replyString = new String(reply, ZMQ.CHARSET);
-                String[] partsResponse = replyString.split("\\|");
-
-                System.out.println("Peticion completada. \nSalones: " + partsResponse[0] + "\nLaboratorios: " + partsResponse[1]);
-                System.out.println("Status: " + partsResponse[2]);
-
-                receiveSocket.send(replyString);
             }
         }
     }

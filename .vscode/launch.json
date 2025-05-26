@@ -3,14 +3,23 @@
   "configurations": [
     {
       "type": "java",
+      "name": "broker",
+      "request": "launch",
+      "mainClass": "com.puj.servidores.Broker",
+      "projectName": "distribuidos",
+      "args": [
+        "380", "60", "2"
+      ]
+    },
+    {
+      "type": "java",
       "name": "central",
       "request": "launch",
       "mainClass": "com.puj.servidores.central",
       "projectName": "distribuidos",
       "args": [
         "20",
-        "10",
-        "10.195.48.154"
+        "10"
       ]
     },
     {
@@ -20,7 +29,9 @@
       "mainClass": "com.puj.servidores.replica",
       "projectName": "distribuidos",
       "args": [
-        "10.195.48.154",
+        "20",
+        "10",
+        "192.168.10.34",
         "7000"
       ]
     },
@@ -40,9 +51,9 @@
       "args": [
         "Ingeniería",
         "2025-1",
-        "10.195.48.154",
+        "192.168.10.34",
         "1081",
-        "10.195.48.154"
+        "192.168.10.34"
       ]
     },
     {
@@ -54,9 +65,9 @@
       "args": [
         "Tecnología",
         "2025-1",
-        "10.195.48.154",
+        "192.168.10.34",
         "1082",
-        "10.195.48.154"
+        "192.168.10.34"
       ]
     },
     {
@@ -70,7 +81,7 @@
         "Ingeniería",
         "3",
         "2",
-        "10.195.48.154:1081"
+        "192.168.10.34:1081"
       ]
     },
     {
@@ -84,7 +95,7 @@
         "Ingeniería",
         "4",
         "5",
-        "10.195.48.154:1081"
+        "192.168.10.34:1081"
       ]
     },
     {
@@ -98,7 +109,7 @@
         "Tecnología",
         "1",
         "2",
-        "10.195.48.154:1082"
+        "192.168.10.34:1082"
       ]
     },
     {
@@ -112,7 +123,7 @@
         "Tecnología",
         "4",
         "1",
-        "10.195.48.154:1082"
+        "192.168.10.34:1082"
       ]
     },
     {
@@ -126,7 +137,7 @@
         "Ingeniería",
         "4",
         "3",
-        "10.195.48.154:1081"
+        "192.168.10.34:1081"
       ]
     },
     {
@@ -140,7 +151,7 @@
         "Ingeniería",
         "2",
         "2",
-        "10.195.48.154:1081"
+        "192.168.10.34:1081"
       ]
     },
     {
@@ -154,71 +165,15 @@
         "Ingeniería",
         "1",
         "1",
-        "10.195.48.154:1081"
+        "192.168.10.34:1081"
       ]
     },
-    {
-      "type": "java",
-      "name": "broker",
-      "request": "launch",
-      "mainClass": "com.puj.servidores.Broker",
-      "projectName": "distribuidos"
-    },
-    {
-      "type": "java",
-      "name": "CentralWorker 1",
-      "request": "launch",
-      "mainClass": "com.puj.servidores.CentralWorker",
-      "projectName": "distribuidos",
-      "args": [
-        "10", "5"
-      ]
-    },
-    {
-      "type": "java",
-      "name": "CentralWorker 2",
-      "request": "launch",
-      "mainClass": "com.puj.servidores.CentralWorker",
-      "projectName": "distribuidos",
-      "args": [
-        "10", "5"
-      ]
-    },
-    {
-      "type": "java",
-      "name": "Facultad Broker",
-      "request": "launch",
-      "mainClass": "com.puj.Facultad",
-      "projectName": "distribuidos",
-      "args": [
-        "Ingeniería",
-        "2025-2",
-        "localhost",
-        "5555",
-        "localhost"
-      ]
-    },
-    {
-      "type": "java",
-      "name": "Programa Broker",
-      "request": "launch",
-      "mainClass": "com.puj.Programa",
-      "projectName": "distribuidos",
-      "args": [
-        "Sistemas",
-        "2025-2",
-        "Ingeniería",
-        "3",
-        "2",
-        "localhost:5555"
-      ]
-    }
   ],
   "compounds": [
     {
-      "name": "Quicksetup",
+      "name": "LB Quicksetup",
       "configurations": [
-        "central",
+        "broker",
         "database",
         "replica"
       ]
@@ -256,13 +211,36 @@
       ]
     },
     {
-      "name": "LB Test: Broker + 2 Workers + Facultad + Programa",
+      "name": "LB Test: Broker + Facultad + Programa",
       "configurations": [
         "broker",
-        "CentralWorker 1",
-        "CentralWorker 2",
-        "Facultad Broker",
-        "Programa Broker"
+        "Facultad 1",
+        "Programa 1",
+        "database"
+      ]
+    },
+    {
+      "name": "LB Caso 1: 1 facuktad 2 programas",
+      "configurations": [
+        "broker",
+        "Facultad 1",
+        "Programa 1",
+        "Programa 2",
+        "database"
+      ]
+    },
+    {
+      "name": "LB 5 Programas",
+      "configurations": [
+        "broker",
+        "Facultad 1",
+        "Programa 1",
+        "Programa 2",
+        "Programa 5",
+        "Programa 6",
+        "Programa 7",
+        "replica",
+        "database"
       ]
     }
   ]

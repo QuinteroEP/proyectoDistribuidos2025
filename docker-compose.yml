@@ -1,87 +1,78 @@
 services:
-  replica:
+  central:
+    image: distribuidos/central
+    build:
+      context: .
+      dockerfile: dockerfile-central
+    networks:
+      - mynetwork
+    command: ["20", "10"]
+    ports:
+      - 9400:9400
+
+  Backup:
+    image: distribuidos/replica
     build:
       context: .
       dockerfile: dockerfile-replica
-    image: distribuidos/replica
     networks:
       - mynetwork
-    depends_on:
-      - postgres
-    command: ["broker", "15000"]  # <--- parámetros requeridos por replica.java
-    environment:
-      - PRIMARY_IP=central
-      - DB_URL=jdbc:postgresql://postgres:5432/aulas
-
-  broker:
-    build:
-      context: .
-      dockerfile: dockerfile-broker
-    image: distribuidos/broker
-    networks:
-      - mynetwork
-    ports:
-      - "5555:5555"
-      - "5556:5556"
+    command: ["20", "10", "central", "10000"]
 
   facultad:
+    image: distribuidos/facultad
     build:
       context: .
       dockerfile: dockerfile-facultad
-    image: distribuidos/facultad
     networks:
       - mynetwork
-    command: ["Ingeniería", "2025-2", "broker", "5555", "broker"]
-    depends_on:
-      - broker
+    command: ["Ingeniería", "2025-1", "central", "1081", "backup"]
 
-  academico:
+  programas:
+    image: distribuidos/programas
     build:
       context: .
       dockerfile: dockerfile-programa
-    image: distribuidos/programa-academico
-    depends_on:
-      - facultad
     networks:
       - mynetwork
-    command: ["Sistemas", "2025-2", "Ingeniería", "3", "2", "facultad:5555"]
-
-  centralworker1:
-    build:
-      context: .
-      dockerfile: dockerfile-worker
-    image: distribuidos/worker
-    networks:
-      - mynetwork
-    command: ["10", "5"]
-    depends_on:
-      - broker
-
-  centralworker2:
-    build:
-      context: .
-      dockerfile: dockerfile-worker
-    image: distribuidos/worker
-    networks:
-      - mynetwork
-    command: ["10", "5"]
-    depends_on:
-      - broker
-
-  postgres:
-    image: postgres:15
+    command: ["Ingeniería de Sistemas", "2025-1", "Ingeniería", "3", "2", "facultad:1081"]
+    
+  mongo:
+    image: mongo
+    restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: aulas
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
     networks:
       - mynetwork
 
-volumes:
-  pgdata:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+    networks:
+      - mynetwork
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana:/etc/grafana/provisioning/datasources
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:
     driver: bridge
+
+volumes:
+  grafana_data:
