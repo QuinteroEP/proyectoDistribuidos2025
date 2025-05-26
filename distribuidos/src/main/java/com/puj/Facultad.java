@@ -20,6 +20,10 @@ public class Facultad {
         final String port = args[3];
         final String backupIP = args[4];
 
+        long startTime;
+        long endTime;
+        long responseTime;
+
         System.out.println("\nFacultad de " + nombre + " para el semestre " + semestre + " creada.\n");
 
         try (ZContext context = new ZContext()) {
@@ -58,6 +62,7 @@ public class Facultad {
 
                 //Enviar mensaje
                 String request = nombrePrograma + "|" + numeroSalones + "|" + numeroLaboratorios + "|" + nombreFacultad + "|" + semestrePrograma; 
+                startTime = System.currentTimeMillis();
                 sendSocket.sendMore(""); 
                 sendSocket.send(request.getBytes(ZMQ.CHARSET), 0);
 
@@ -97,6 +102,10 @@ public class Facultad {
                 System.out.println("Status: " + partsResponse[2]);
 
                 receiveSocket.send(replyString);
+
+                endTime = System.currentTimeMillis();
+                responseTime = endTime - startTime;
+                System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
             }
         }
     }

@@ -18,6 +18,10 @@ public class Programa {
         final int numeroLaboratorios = Integer.parseInt(args[4]);
         final String ip = args[5];
 
+        long startTime;
+        long endTime;
+        long responseTime;
+
         System.out.println("\nNueva peticion creada para el programa " + nombre + " (" + semestre + "):");
         System.out.println("Salones: " + numeroSalones);
         System.out.println("Laboratorios: " + numeroLaboratorios);
@@ -28,6 +32,7 @@ public class Programa {
             socket.connect("tcp://"+ip);
 
             String mensaje = nombre + "," + semestre + "," + numeroSalones + "," + numeroLaboratorios + "," + facultad;
+            startTime = System.currentTimeMillis();
             socket.send(mensaje);
 
             String reply = socket.recvStr();
@@ -51,6 +56,10 @@ public class Programa {
             {
                 System.out.println("Laboratorios asignados: " + partsResponse[1]);
             }
+
+            endTime = System.currentTimeMillis();
+            responseTime = endTime - startTime;
+            System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
         }
     }
 }
