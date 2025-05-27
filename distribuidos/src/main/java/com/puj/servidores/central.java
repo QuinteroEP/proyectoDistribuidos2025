@@ -223,6 +223,8 @@ public class central {
                     status = "completado parcialmente";
                     dbManager.writeAsign(nombre, salonesAsignados, laboratoriosAsignados, status, semestrePrograma,
                             nombreFacultad, LocalDate.now().toString());
+                    dbManager.writePending(nombre, numeroSalones, numeroLaboratorios, nombreFacultad, semestrePrograma,
+                            LocalDate.now().toString());
                 }
 
                 System.out.println("\nSalones disponibles: " + salonesDisponibles);

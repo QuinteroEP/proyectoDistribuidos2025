@@ -44,6 +44,34 @@
         },
         {
             "type": "java",
+            "name": "Facultad 1LB",
+            "request": "launch",
+            "mainClass": "com.puj.Facultad",
+            "projectName": "distribuidos",
+            "args": [
+                "Ingeniería",
+                "2025-1",
+                "192.168.10.2",
+                "1081",
+                "192.168.10.2"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Facultad 2LB",
+            "request": "launch",
+            "mainClass": "com.puj.Facultad",
+            "projectName": "distribuidos",
+            "args": [
+                "Ingeniería",
+                "2025-3",
+                "192.168.10.2",
+                "1081",
+                "192.168.10.2"
+            ]
+        },
+        {
+            "type": "java",
             "name": "Facultad 1",
             "request": "launch",
             "mainClass": "com.puj.Facultad",
@@ -81,20 +109,6 @@
                 "2025-1",
                 "192.168.10.2",
                 "1083",
-                "192.168.10.2"
-            ]
-        },
-        {
-            "type": "java",
-            "name": "Facultad 4",
-            "request": "launch",
-            "mainClass": "com.puj.Facultad",
-            "projectName": "distribuidos",
-            "args": [
-                "Ingeniería",
-                "2025-3",
-                "192.168.10.2",
-                "1081",
                 "192.168.10.2"
             ]
         },
@@ -304,7 +318,7 @@
                 "2025-1",
                 "Ciencias Sociales",
                 "5",
-                "2",
+                "0",
                 "192.168.10.2:1083"
             ]
         },
@@ -314,10 +328,38 @@
             "request": "launch",
             "mainClass": "com.puj.Programa",
             "args": [
-                "Redes y Telecomunicaciones",
+                "Antropología",
                 "2025-1",
-                "Tecnología",
+                "Ciencias Sociales",
+                "5",
+                "2",
+                "192.168.10.2:1082"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "P1C8",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Sociología",
+                "2025-1",
+                "Ciencias Sociales",
                 "0",
+                "2",
+                "192.168.10.2:1082"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "P1C9",
+            "request": "launch",
+            "mainClass": "com.puj.Programa",
+            "args": [
+                "Psicología",
+                "2025-1",
+                "Ciencias Sociales",
+                "5",
                 "2",
                 "192.168.10.2:1082"
             ]
@@ -332,7 +374,7 @@
                 "2025-1",
                 "Ingeniería",
                 "10",
-                "2",
+                "1",
                 "192.168.10.2:1081"
             ]
         },
@@ -345,8 +387,8 @@
                 "Ingeniería Electrónica",
                 "2025-1",
                 "Ingeniería",
-                "2",
                 "4",
+                "1",
                 "192.168.10.2:1081"
             ]
         },
@@ -359,7 +401,7 @@
                 "Ingeniería de Sistemas",
                 "2025-3",
                 "Ingeniería",
-                "10",
+                "8",
                 "2",
                 "192.168.10.2:1081"
             ]
@@ -374,7 +416,7 @@
                 "2025-3",
                 "Ingeniería",
                 "2",
-                "4",
+                "2",
                 "192.168.10.2:1081"
             ]
         },
@@ -760,7 +802,7 @@
         "configurations": [
             "broker",
             "database",
-            "Facultad 1",
+            "Facultad 1LB",
             "Programa 1",
             "replica"
         ]
@@ -819,7 +861,7 @@
     {
         "name": "Caso 1: Load Balancer 2 programas",
         "configurations": [
-            "Facultad 1",
+            "Facultad 1LB",
             "LBP1",
             "LBP2",
         ]
@@ -827,7 +869,7 @@
     {
         "name": "Caso 2: Load Balancer 2 programas diferente semestre",
         "configurations": [
-            "Facultad 4",
+            "Facultad 2LB",
             "LBP3",
             "LBP4",
         ]
@@ -857,8 +899,8 @@
             "P1C3",
             "P1C4",
             "P1C5",
-            "P1C6",
-            "P1C7"
+            "P1C7",
+            "P1C8"
         ]
     },
     {
