@@ -1,5 +1,8 @@
 package com.puj;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
@@ -8,6 +11,10 @@ import org.zeromq.ZMQ.Poller;
 public class Facultad {
     private static final long REQUEST_TIMEOUT = 5000;
     private static final long DELAY = 3000;
+
+    // Tiempos de respuets
+    public static List<Long> tiempos = new ArrayList<>();
+    public static long runningTimeTotal = 0;
     public static void main(String[] args) throws InterruptedException {
         if(args.length != 5) {
             System.out.println("\nError: uso incorrecto. Se requieren los parametros <nombre de la facultad> <semestre> <direccion IP del servidor Central> <puerto de la facultad> <direccion IP del servidor de respaldo>\n");
@@ -106,7 +113,44 @@ public class Facultad {
                 endTime = System.currentTimeMillis();
                 responseTime = endTime - startTime;
                 System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
+                getTimes(responseTime);
+                responseTime = 0;
             }
+            context.destroy();
+        }
+    }
+
+    public static void getTimes(Long t) {
+    long maxTime = 0;
+    long minTime = 1000;
+    long promedio = 0;
+
+    runningTimeTotal = runningTimeTotal + t;
+    tiempos.add(t);
+
+    if (tiempos.size() == 5) {
+        // Tiempo maximo
+        for (int i = 0; i < tiempos.size(); i++) {
+            if (tiempos.get(i) > maxTime) {
+                maxTime = tiempos.get(i);
+            }
+        }
+
+        // Tiempo minimo
+        for (int i = 0; i < tiempos.size(); i++) {
+            if (tiempos.get(i) < minTime) {
+                minTime = tiempos.get(i);
+            }
+        }
+
+        promedio = runningTimeTotal / 5;
+
+        System.out.println("\nTiempo minimo de respueta: " + minTime + "ms");
+        System.out.println("Tiempo maximo de respueta: " + maxTime + "ms");
+        System.out.println("Tiempo promedio de respueta: " + promedio + "ms\n");
+
+        runningTimeTotal = 0;
+        tiempos.clear();
         }
     }
 }

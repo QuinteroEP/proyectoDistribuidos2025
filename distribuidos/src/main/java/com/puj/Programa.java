@@ -60,6 +60,8 @@ public class Programa {
             endTime = System.currentTimeMillis();
             responseTime = endTime - startTime;
             System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
+
+            context.destroy();
         }
     }
 }

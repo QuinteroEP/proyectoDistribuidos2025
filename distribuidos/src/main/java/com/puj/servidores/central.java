@@ -13,10 +13,6 @@ import org.zeromq.ZFrame;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMsg;
 
-import io.prometheus.metrics.core.datapoints.Timer;
-import io.prometheus.metrics.core.metrics.Histogram;
-import io.prometheus.metrics.exporter.httpserver.HTTPServer;
-
 import com.puj.dbManager;
 
 public class central {
@@ -27,7 +23,8 @@ public class central {
 
     public static void main(String[] args) throws IOException {
         if (args.length != 2) {
-            System.out.println("\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles>\n");
+            System.out.println(
+                    "\nError: uso incorrecto. Se requieren los parametros <cantidad de salones disponibles> <cantidad de laboratorios disponibles>\n");
             System.exit(1);
         }
 
@@ -38,21 +35,12 @@ public class central {
         List<String> salones = new ArrayList<>();
         List<String> laboratorios = new ArrayList<>();
 
-        //Metricas para Prometheus
-        final Histogram prometheusTimes = Histogram.builder()
-            .name("central_response_time")
-            .help("Tiempo de respuesta en Segundos")
-            .register();
-
-        HTTPServer server = HTTPServer.builder()
-                .port(9400)
-                .buildAndStart();
-
         // Crear Socket
         try (ZContext context = new ZContext()) {
             ZMQ.Socket socket = context.createSocket(SocketType.ROUTER);
             socket.bind("tcp://*:1090");
-            System.out.println("\nServidor central abierto en el puerto 1090. Direccion " + InetAddress.getLocalHost() + "\n");
+            System.out.println(
+                    "\nServidor central abierto en el puerto 1090. Direccion " + InetAddress.getLocalHost() + "\n");
 
             ZMQ.Socket workerSocket = context.createSocket(SocketType.DEALER);
             workerSocket.bind("inproc://backend");
@@ -67,7 +55,7 @@ public class central {
             updateSocket.bind(addressUpdates);
             System.out.println("Puerto 1093 para actualizaciones del servidor replica abierto\n");
 
-            //Proceso para heartbeats
+            // Proceso para heartbeats
             new Thread(() -> {
                 try (ZContext heartbeatContext = new ZContext()) {
                     while (!Thread.currentThread().isInterrupted()) {
@@ -101,10 +89,10 @@ public class central {
             System.out.println("Esperando peticiones...\n");
 
             // Crear trabajadores
-            for (int threadNbr = 0; threadNbr < 10; threadNbr++){
-                new Thread(new handleRequest(context, salones, laboratorios, updateSocket, prometheusTimes)).start();
+            for (int threadNbr = 0; threadNbr < 10; threadNbr++) {
+                new Thread(new handleRequest(context, salones, laboratorios, updateSocket)).start();
             }
-                
+
             ZMQ.proxy(socket, workerSocket, null);
         }
     }
@@ -123,33 +111,22 @@ public class central {
         Boolean LabSuccess = true;
         Boolean incomplete = false;
 
-        long startTime;
-        long endTime;
-        long responseTime;
-
-        Histogram prometheusTimer;
-
         ZMQ.Socket updateSocket;
 
-        public handleRequest(ZContext ctx, List<String> salonesDisponibles, List<String> laboratoriosDisponibles, ZMQ.Socket updateSocket, Histogram prometheusTimer)
-        {
+        public handleRequest(ZContext ctx, List<String> salonesDisponibles, List<String> laboratoriosDisponibles,
+                ZMQ.Socket updateSocket) {
             this.salonesDisponibles = salonesDisponibles;
             this.laboratoriosDisponibles = laboratoriosDisponibles;
             this.ctx = ctx;
-            this.prometheusTimer = prometheusTimer;
             this.updateSocket = updateSocket;
         }
+
         @Override
-        public void run(){
+        public void run() {
             ZMQ.Socket worker = ctx.createSocket(SocketType.DEALER);
             worker.connect("inproc://backend");
 
             while (!Thread.currentThread().isInterrupted()) {
-                //Timer interno
-                startTime = System.currentTimeMillis();
-                
-                Timer timer = prometheusTimer.startTimer();
-                try{
                 // Reibir peitciones
                 ZMsg msg = ZMsg.recvMsg(worker);
 
@@ -166,7 +143,9 @@ public class central {
                 String nombreFacultad = parts[3];
                 String semestrePrograma = parts[4];
 
-                System.out.println("\nNueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; " + numeroLaboratorios + " Laboratorios. (Semestre: " + semestrePrograma + ", facultad: " + nombreFacultad + ")\n");
+                System.out.println("\nNueva solicitud del programa " + nombre + ": " + numeroSalones + " salones; "
+                        + numeroLaboratorios + " Laboratorios. (Semestre: " + semestrePrograma + ", facultad: "
+                        + nombreFacultad + ")\n");
 
                 // Realizar asignacion de salones
 
@@ -181,7 +160,7 @@ public class central {
                     System.out.println("Atencion: Salones insuficientes.\n");
                     ClassSuccess = false;
                     if (salonesDisponibles.size() != 0) {
-                         while (!salonesDisponibles.isEmpty()) {
+                        while (!salonesDisponibles.isEmpty()) {
                             salonesAsignados.add(salonesDisponibles.get(0));
                             salonesDisponibles.remove(0);
                         }
@@ -246,9 +225,6 @@ public class central {
                             nombreFacultad, LocalDate.now().toString());
                 }
 
-                endTime = System.currentTimeMillis();
-                responseTime = endTime - startTime;
-
                 System.out.println("\nSalones disponibles: " + salonesDisponibles);
                 System.out.println("Laboratorios disponibles: " + laboratoriosDisponibles);
                 System.out.println("\n");
@@ -258,9 +234,6 @@ public class central {
                 reply.addString("");
                 reply.addString(salonesAsignados + "|" + laboratoriosAsignados + "|" + status);
                 reply.send(worker);
-
-                System.out.println("\nTiempo de respuesta: " + responseTime + " ms\n");
-                getTimes(responseTime);
 
                 new Thread(() -> {
                     System.out.println("Actualizando backup");
@@ -273,42 +246,8 @@ public class central {
                 }).start();
 
                 content.destroy();
-            }finally{
-                timer.observeDuration();
-            }
             }
             ctx.destroy();
-        }
-    }
-
-public static void getTimes(Long t) {
-    long maxTime = 0;
-    long minTime = 1000;
-    long promedio = 0;
-
-    runningTimeTotal = runningTimeTotal + t;
-    tiempos.add(t);
-
-    if (tiempos.size() == 5) {
-        // Tiempo maximo
-        for (int i = 0; i < tiempos.size(); i++) {
-            if (tiempos.get(i) > maxTime) {
-                maxTime = tiempos.get(i);
-            }
-        }
-
-        // Tiempo minimo
-        for (int i = 0; i < tiempos.size(); i++) {
-            if (tiempos.get(i) < minTime) {
-                minTime = tiempos.get(i);
-            }
-        }
-
-        promedio = runningTimeTotal / 5;
-
-        System.out.println("\nTiempo minimo de respueta: " + minTime + "ms");
-        System.out.println("Tiempo maximo de respueta: " + maxTime + "ms");
-        System.out.println("Tiempo promedio de respueta: " + promedio + "ms\n");
         }
     }
 }
